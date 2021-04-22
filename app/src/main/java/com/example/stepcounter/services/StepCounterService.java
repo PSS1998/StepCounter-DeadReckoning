@@ -28,6 +28,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class StepCounterService extends Service {
+    public static final String dbName = "StepCounter";
+    public static final String stepDbName = "stepCounts";
     private Handler mHandler = new Handler();
     private Timer mTimer;
 
@@ -85,7 +87,7 @@ public class StepCounterService extends Service {
 
     @SuppressLint("CommitPrefEdits")
     private void setSharedPreferences() {
-        sharedPreferences = getApplicationContext().getSharedPreferences("StepCounter", 0);
+        sharedPreferences = getApplicationContext().getSharedPreferences(dbName, 0);
         editor = sharedPreferences.edit();
     }
 
@@ -123,14 +125,14 @@ public class StepCounterService extends Service {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    int todaySteps = sharedPreferences.getInt("todaySteps", 0);
+                    int stepCounts = sharedPreferences.getInt(stepDbName, 0);
                     if (bufferStep < 6) {
-                        todaySteps += bufferStep;
-                        editor.putInt("todaySteps", todaySteps);
+                        stepCounts += bufferStep;
+                        editor.putInt(stepDbName, stepCounts);
                     }
                     bufferStep = 0;
 
-                    updateNotification(todaySteps);
+                    updateNotification(stepCounts);
                     editor.apply();
                 }
             });
