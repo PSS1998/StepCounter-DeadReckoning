@@ -31,7 +31,6 @@ public class StepCounterService extends Service {
     private Handler mHandler = new Handler();
     private Timer mTimer;
 
-    private Integer stepCount = 0;
     private int bufferStep = 0;
     private double MagnitudePrevious = 0;
 
@@ -45,9 +44,7 @@ public class StepCounterService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        sharedPreferences = getApplicationContext().getSharedPreferences("AuthInfo", 0);
-        editor = sharedPreferences.edit();
-
+        setSharedPreferences();
         setTimer();
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -60,14 +57,15 @@ public class StepCounterService extends Service {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if (sensorEvent != null) {
+
                     float x_acceleration = sensorEvent.values[0];
                     float y_acceleration = sensorEvent.values[1];
                     float z_acceleration = sensorEvent.values[2];
 
                     double Magnitude = Math.sqrt(x_acceleration * x_acceleration + y_acceleration * y_acceleration + z_acceleration * z_acceleration);
                     double MagnitudeDelta = Magnitude - MagnitudePrevious;
-                    MagnitudePrevious = Magnitude;
 
+                    MagnitudePrevious = Magnitude;
                     if (MagnitudeDelta > 4 && MagnitudeDelta < 13) {
                         bufferStep++;
                     }
@@ -85,6 +83,12 @@ public class StepCounterService extends Service {
         }
     }
 
+    @SuppressLint("CommitPrefEdits")
+    private void setSharedPreferences() {
+        sharedPreferences = getApplicationContext().getSharedPreferences("StepCounter", 0);
+        editor = sharedPreferences.edit();
+    }
+
     private void setTimer() {
         if (mTimer != null)
             mTimer.cancel();
@@ -97,7 +101,7 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int) (initStepCount / 1.5)), String.valueOf(calculateCalories(initStepCount)), null);
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int) (initStepCount / 1.5)), String.valueOf(calculateCalories(initStepCount)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -119,46 +123,30 @@ public class StepCounterService extends Service {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        if (!sharedPreferences.getBoolean("isLocationEnable", false)) {
-                            editor.putBoolean("isLocationEnable", true);
-                            int todaySteps = sharedPreferences.getInt("todaySteps", 0);
-                            updateNotification(String.valueOf(todaySteps), String.valueOf((int) (todaySteps / 1.5)), String.valueOf(calculateCalories(todaySteps)), null);
-                        }
-                        stepCount = sharedPreferences.getInt("bufferStepCount", 0);
-                        if (bufferStep < 4) {
-                            stepCount += bufferStep;
-                        }
-                        bufferStep = 0;
-                        editor.putInt("bufferStepCount", stepCount);
-                        int timerCounter = sharedPreferences.getInt("timeCounter", 0);
-                        timerCounter++;
-                        if (timerCounter >= 60) {
-                            timerCounter = 0;
-                            calculateSteps();
-                        }
-                        editor.putInt("timeCounter", timerCounter);
-                        editor.apply();
-                    } catch (Exception ignored) {
+                    int todaySteps = sharedPreferences.getInt("todaySteps", 0);
+                    if (bufferStep < 6) {
+                        todaySteps += bufferStep;
+                        editor.putInt("todaySteps", todaySteps);
                     }
+                    bufferStep = 0;
+
+                    updateNotification(todaySteps);
+                    editor.apply();
                 }
             });
         }
     }
 
-    private void calculateSteps() {
-        int stepByLocation = sharedPreferences.getInt("bufferStepCount", 0);
-        int todaySteps = sharedPreferences.getInt("todaySteps", 0) + stepByLocation;
-        editor.putInt("todaySteps", todaySteps);
-        stepByLocation += sharedPreferences.getInt("stepCountByLocation", 0);
-        editor.putInt("stepCountByLocation", stepByLocation);
-        editor.putInt("bufferStepCount", 0);
-        updateNotification(String.valueOf(todaySteps), String.valueOf((int) (todaySteps / 1.5)), String.valueOf(calculateCalories(todaySteps)), null);
-        editor.apply();
+    //NOTIFICATION
+    private void updateNotification(int stepCount) {
+        try {
+            updateNotification(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.5)), String.valueOf(calculateCalories(stepCount)));
+        } catch (Exception e) {
+            // TODO: 4/22/2021 show error
+        }
     }
 
-    //NOTIFICATION
-    private Notification getMyActivityNotification(String steps, String km, String calories, String message) {
+    private Notification getMyActivityNotification(String steps, String km, String calories) {
         createNotificationChannel();
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -183,8 +171,8 @@ public class StepCounterService extends Service {
                 .build();
     }
 
-    private void updateNotification(String steps, String km, String calories, String message) {
-        Notification notification = getMyActivityNotification(steps, km, calories, message);
+    private void updateNotification(String steps, String km, String calories) {
+        Notification notification = getMyActivityNotification(steps, km, calories);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
@@ -193,7 +181,7 @@ public class StepCounterService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "HealthPay Foreground Service Channel",
+                    "StepCounter Foreground Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             serviceChannel.setSound(null, null);
@@ -204,7 +192,7 @@ public class StepCounterService extends Service {
         }
     }
 
-    private int calculateCalories(Integer stepCounts) {
+    public static int calculateCalories(Integer stepCounts) {
         int m = 70;//kg
         int a = 5;//m/s2
         double h = 1.78;
