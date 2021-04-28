@@ -1,7 +1,9 @@
 package com.example.stepcounter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                1);
 
         sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
         editor = sharedPreferences.edit();

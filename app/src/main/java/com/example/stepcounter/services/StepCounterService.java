@@ -27,6 +27,7 @@ import com.example.stepcounter.R;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class StepCounterService extends Service {
     public static final String dbName = "StepCounter";
     public static final String stepDbName = "stepCounts";
@@ -39,9 +40,13 @@ public class StepCounterService extends Service {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    private boolean isStepDetectorSensorPresent = false;
+    private float StepNum = 0;
+
     //notification
     public static final String CHANNEL_ID = "124578";
     private static final int NOTIFICATION_ID = 513;
+
 
     @Override
     public void onCreate() {
@@ -49,31 +54,43 @@ public class StepCounterService extends Service {
         setSharedPreferences();
         setTimer();
 
+
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = null;
         if (sensorManager != null) {
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if (android.os.Build.VERSION.SDK_INT >= 30) {
+                if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null) {
+                    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+                    isStepDetectorSensorPresent = true;
+                }
+            }
+            if (!isStepDetectorSensorPresent) {
+                sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            }
         }
 
         SensorEventListener stepDetector = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if (sensorEvent != null) {
+                    if (isStepDetectorSensorPresent) {
+                        StepNum++;
+                    }
+                    else {
+                        float x_acceleration = sensorEvent.values[0];
+                        float y_acceleration = sensorEvent.values[1];
+                        float z_acceleration = sensorEvent.values[2];
 
-                    float x_acceleration = sensorEvent.values[0];
-                    float y_acceleration = sensorEvent.values[1];
-                    float z_acceleration = sensorEvent.values[2];
+                        double Magnitude = Math.sqrt(x_acceleration * x_acceleration + y_acceleration * y_acceleration + z_acceleration * z_acceleration);
+                        double MagnitudeDelta = Magnitude - MagnitudePrevious;
 
-                    double Magnitude = Math.sqrt(x_acceleration * x_acceleration + y_acceleration * y_acceleration + z_acceleration * z_acceleration);
-                    double MagnitudeDelta = Magnitude - MagnitudePrevious;
-
-                    MagnitudePrevious = Magnitude;
-                    if (MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-                        bufferStep++;
+                        MagnitudePrevious = Magnitude;
+                        if (MagnitudeDelta > 4 && MagnitudeDelta < 13) {
+                            bufferStep++;
+                        }
                     }
                 }
             }
-
             @Override
             public void onAccuracyChanged(Sensor sensor, int i) {
             }
@@ -83,6 +100,7 @@ public class StepCounterService extends Service {
         } else {
             // TODO: 4/22/2021 show error sensor not found
         }
+
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -97,7 +115,7 @@ public class StepCounterService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 1000);
+        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 100);
     }
 
     @Override
@@ -126,11 +144,18 @@ public class StepCounterService extends Service {
                 @Override
                 public void run() {
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
-                    if (bufferStep < 6) {
-                        stepCounts += bufferStep;
+                    if (isStepDetectorSensorPresent) {
+                        stepCounts += StepNum;
                         editor.putInt(stepDbName, stepCounts);
+                        StepNum = 0;
                     }
-                    bufferStep = 0;
+                    else {
+                        if (bufferStep < 6 && bufferStep > 0) {
+                            stepCounts++;
+                            editor.putInt(stepDbName, stepCounts);
+                        }
+                        bufferStep = 0;
+                    }
 
                     updateNotification(stepCounts);
                     editor.apply();
@@ -142,7 +167,7 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            updateNotification(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.5)), String.valueOf(calculateCalories(stepCount)));
+            updateNotification(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.4)), String.valueOf(calculateCalories(stepCount)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }
