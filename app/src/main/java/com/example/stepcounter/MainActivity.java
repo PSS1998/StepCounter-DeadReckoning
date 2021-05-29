@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.stepcounter.services.StepCounterService;
 
@@ -17,11 +20,30 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
+    TextView textView;
+    Button button;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        textView = (TextView) findViewById(R.id.info);
+        button = (Button) findViewById(R.id.updateButton);
+        Orientation orientation = Orientation.getInstance(sensorManager);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            boolean isStarted = false;
+
+            @Override
+            public void onClick(View view) {
+                orientation.updateOrientationAngles();
+                float[] orientationAngles = orientation.getOrientationAngles();
+                textView.setText("x:" + orientationAngles[0] + " y:" + orientationAngles[1] + " z:" + orientationAngles[2]);
+            }
+        });
 
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
@@ -39,6 +61,16 @@ public class MainActivity extends AppCompatActivity {
                 resetStepCountData();
             }
         });
+
+        Button graphButton = findViewById(R.id.graphButton);
+        graphButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(MainActivity.this, GraphActivity.class);
+                startActivity(myIntent);
+            }
+        });
+
     }
 
     private void resetStepCountData() {

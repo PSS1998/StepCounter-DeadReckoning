@@ -61,7 +61,7 @@ public class StepCounterService extends Service {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
                 if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null) {
                     sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-                    isStepDetectorSensorPresent = true;
+//                    isStepDetectorSensorPresent = true;
                 }
             }
             if (!isStepDetectorSensorPresent) {
@@ -115,7 +115,7 @@ public class StepCounterService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 100);
+        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 200);
     }
 
     @Override

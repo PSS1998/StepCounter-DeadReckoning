@@ -16,11 +16,22 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <service android:name="com.example.stepcounter.services.StepCounterService" android:enabled="true"  android:exported="false"/>
+
+        <activity
+            android:name=".GraphActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="activity_graph"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat" >
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
 
     </application>
 
