@@ -44,29 +44,29 @@ public class Vector {
         this.z = z;
     }
 
-    public com.example.stepcounter.Vector multi(double coefficient) {
+    public Vector multi(double coefficient) {
         this.x *= coefficient;
         this.y *= coefficient;
         this.z *= coefficient;
         return this;
     }
 
-    public com.example.stepcounter.Vector div(double coefficient) {
+    public Vector div(double coefficient) {
         this.x /= coefficient;
         this.y /= coefficient;
         this.z /= coefficient;
         return this;
     }
 
-    public com.example.stepcounter.Vector add(com.example.stepcounter.Vector vector) {
+    public Vector add(Vector vector) {
         this.x += vector.x;
         this.y += vector.y;
         this.z += vector.z;
         return this;
     }
 
-    public static com.example.stepcounter.Vector add(com.example.stepcounter.Vector firstVector, com.example.stepcounter.Vector secondVector) {
-        return new com.example.stepcounter.Vector(firstVector.x + secondVector.x, firstVector.y + secondVector.y, firstVector.z + secondVector.z);
+    public static Vector add(Vector firstVector, Vector secondVector) {
+        return new Vector(firstVector.x + secondVector.x, firstVector.y + secondVector.y, firstVector.z + secondVector.z);
     }
 
     public double getAbsoluteValue() {
@@ -77,12 +77,12 @@ public class Vector {
         return Math.atan2(this.y, this.x);
     }
 
-    public static com.example.stepcounter.Vector fromAbsoluteValueIn2D(double value, double angle) {
-        return new com.example.stepcounter.Vector(Math.cos(angle), Math.sin(angle), 0).multi(value);
+    public static Vector fromAbsoluteValueIn2D(double value, double angle) {
+        return new Vector(Math.cos(angle), Math.sin(angle), 0).multi(value);
     }
 
-    public com.example.stepcounter.Vector rotate2D(float theta) {
-        return new com.example.stepcounter.Vector(this.x * Math.cos(theta) - this.y * Math.sin(theta) , this.y * Math.cos(theta) + this.x * Math.sin(theta), 0);
+    public Vector rotate2D(float theta) {
+        return new Vector(this.x * Math.cos(theta) - this.y * Math.sin(theta) , this.y * Math.cos(theta) + this.x * Math.sin(theta), 0);
     }
 
     @NonNull
@@ -91,15 +91,15 @@ public class Vector {
         return "Vector: {X: " + this.x + ", Y: " + this.y + ", Z: " + this.z + "}";
     }
 
-    public static com.example.stepcounter.Vector nullVector() {
-        return new com.example.stepcounter.Vector();
+    public static Vector nullVector() {
+        return new Vector();
     }
 
-    public static com.example.stepcounter.Vector multi(com.example.stepcounter.Vector firstVector, com.example.stepcounter.Vector secondVector) {
-        return new com.example.stepcounter.Vector(firstVector.x * secondVector.x, firstVector.y * secondVector.y, firstVector.z * secondVector.z);
+    public static Vector multi(Vector firstVector, Vector secondVector) {
+        return new Vector(firstVector.x * secondVector.x, firstVector.y * secondVector.y, firstVector.z * secondVector.z);
     }
 
-    public com.example.stepcounter.Vector round() {
+    public Vector round() {
         this.x = Math.abs(this.x) > ROUND_THRESHOLD ? this.x : 0;
         this.y = Math.abs(this.y) > ROUND_THRESHOLD ? this.y : 0;
         this.z = Math.abs(this.z) > ROUND_THRESHOLD ? this.z : 0;

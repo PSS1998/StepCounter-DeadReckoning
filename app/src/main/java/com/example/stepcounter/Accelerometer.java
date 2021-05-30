@@ -7,15 +7,15 @@ import android.hardware.SensorManager;
 public class Accelerometer extends GameSensorListener {
     private float[] acceleration = new float[3];
     private double timestamp;
-    static private com.example.stepcounter.Accelerometer accelerometer;
+    static private Accelerometer accelerometer;
 
     private Accelerometer(SensorManager sensorManager) {
         super(sensorManager);
     }
 
-    public static com.example.stepcounter.Accelerometer getInstance(SensorManager sensorManager) {
+    public static Accelerometer getInstance(SensorManager sensorManager) {
         if (accelerometer == null)
-            accelerometer = new com.example.stepcounter.Accelerometer(sensorManager);
+            accelerometer = new Accelerometer(sensorManager);
         return accelerometer;
     }
 

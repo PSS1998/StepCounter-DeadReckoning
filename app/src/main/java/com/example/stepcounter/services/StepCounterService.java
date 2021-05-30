@@ -23,6 +23,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
+import com.example.stepcounter.StepCounterActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +34,6 @@ public class StepCounterService extends Service {
     public static final String stepDbName = "stepCounts";
     private Handler mHandler = new Handler();
     private Timer mTimer;
-
     private int bufferStep = 0;
     private double MagnitudePrevious = 0;
 
@@ -158,6 +158,7 @@ public class StepCounterService extends Service {
                     }
 
                     updateNotification(stepCounts);
+
                     editor.apply();
                 }
             });
@@ -168,10 +169,13 @@ public class StepCounterService extends Service {
     private void updateNotification(int stepCount) {
         try {
             updateNotification(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.4)), String.valueOf(calculateCalories(stepCount)));
+
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }
     }
+
+
 
     private Notification getMyActivityNotification(String steps, String km, String calories) {
         createNotificationChannel();
@@ -204,6 +208,9 @@ public class StepCounterService extends Service {
         mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
+
+
+
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -218,6 +225,8 @@ public class StepCounterService extends Service {
             }
         }
     }
+
+
 
     public static int calculateCalories(Integer stepCounts) {
         int m = 70;//kg

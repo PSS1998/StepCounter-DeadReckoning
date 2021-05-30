@@ -10,7 +10,7 @@
         android:id="@+id/info"
         android:layout_width="270dp"
         android:layout_height="427dp"
-        android:text="Hello World!"
+        android:text="For Debugging"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -23,26 +23,32 @@
         android:text="update"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.781"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/info" />
-
-    <Button
-        android:id="@+id/reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="reset"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/info"
+        app:layout_constraintVertical_bias="0.538" />
 
     <Button
         android:id="@+id/graphButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
         android:text="Show Movement"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="416dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.172"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/stratWalking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start walking"
+        android:backgroundTint="#ffb6c1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.499" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,8 +3,8 @@
     package="com.example.stepcounter">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -13,26 +13,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StepCounter">
+        <activity android:name=".StepCounterActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="com.example.stepcounter.services.StepCounterService" android:enabled="true"  android:exported="false"/>
+
+        <service
+            android:name=".services.StepCounterService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
             android:name=".GraphActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="activity_graph"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
+            android:theme="@style/Theme.AppCompat">
 
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
     </application>
 
 </manifest>

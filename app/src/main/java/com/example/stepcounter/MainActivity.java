@@ -17,8 +17,8 @@ import com.example.stepcounter.services.StepCounterService;
 
 public class MainActivity extends AppCompatActivity {
     private boolean running = false;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+//    private SharedPreferences sharedPreferences;
+//    private SharedPreferences.Editor editor;
 
     TextView textView;
     Button button;
@@ -49,18 +49,18 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
                 1);
 
-        sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
-        editor = sharedPreferences.edit();
+//        sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
+//        editor = sharedPreferences.edit();
 
-        startStepCounter();
+//        startStepCounter();
 
-        Button resetButton = findViewById(R.id.reset);
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetStepCountData();
-            }
-        });
+//        Button resetButton = findViewById(R.id.reset);
+//        resetButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                resetStepCountData();
+//            }
+//        });
 
         Button graphButton = findViewById(R.id.graphButton);
         graphButton.setOnClickListener(new View.OnClickListener() {
@@ -71,15 +71,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button startWalking = findViewById(R.id.stratWalking);
+        startWalking.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent stepsIntent = new Intent(MainActivity.this, StepCounterActivity.class);
+                startActivity(stepsIntent);
+            }
+        });
+
     }
 
-    private void resetStepCountData() {
-        editor.putInt(StepCounterService.stepDbName, 0);
-        editor.apply();
-    }
+//    private void resetStepCountData() {
+//        editor.putInt(StepCounterService.stepDbName, 0);
+//        editor.apply();
+//    }
 
-    private void startStepCounter() {
-        Intent intent = new Intent(MainActivity.this, StepCounterService.class);
-        startService(intent);
-    }
+//    private void startStepCounter() {
+//        Intent intent = new Intent(MainActivity.this, StepCounterService.class);
+//        startService(intent);
+//    }
 }

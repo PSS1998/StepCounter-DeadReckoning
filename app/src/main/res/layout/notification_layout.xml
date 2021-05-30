@@ -63,7 +63,7 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/notification_steptext"
+                android:id="@+id/notification_stepstext"
                 style="@style/TextAppearance.Compat.Notification.Info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
