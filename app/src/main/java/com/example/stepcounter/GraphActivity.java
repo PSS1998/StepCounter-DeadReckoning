@@ -103,7 +103,12 @@ public class GraphActivity extends AppCompatActivity {
                         stepCount = stepCounts;
                         float oPointX = scatterPlot.getLastYPoint();
                         float oPointY = scatterPlot.getLastXPoint();
-                        float magHeading = orientationAngles[0];
+                        float magHeading = 0;
+                        if(magneticHeading.size() > 3)
+                            magHeading = magneticHeading.get(magneticHeading.size()-4);
+                        else
+                            magHeading = magneticHeading.get(magneticHeading.size()-1);
+                        magneticHeading.clear();
                         oPointX += (float)(10 * Math.cos(magHeading));
                         oPointY += (float)(10 * Math.sin(magHeading));
                         scatterPlot.addPoint(oPointY, oPointX);
