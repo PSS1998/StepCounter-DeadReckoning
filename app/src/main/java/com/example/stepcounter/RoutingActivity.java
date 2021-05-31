@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stepcounter.graph.Plotter;
-import com.example.stepcounter.graph.ScatterPlot;
+//import com.example.stepcounter.graph.ScatterPlot;
 import com.example.stepcounter.graph.Tracker;
 import com.example.stepcounter.graph.footstep.FootStep;
 import com.github.mikephil.charting.charts.ScatterChart;
@@ -27,7 +27,7 @@ import java.util.TimerTask;
 
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class GraphActivity extends AppCompatActivity {
+public class RoutingActivity extends AppCompatActivity {
     public static final String dbName = "StepCounter";
     public static final String stepDbName = "stepCounts";
     private MapScaleView mapScaleView;
@@ -35,8 +35,8 @@ public class GraphActivity extends AppCompatActivity {
     private LinearLayout mLinearLayout;
     Plotter plotter;
 
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor editor;
 
     private Handler mHandler = new Handler();
     private Timer mTimer;

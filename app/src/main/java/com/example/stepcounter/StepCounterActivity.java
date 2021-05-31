@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.stepcounter.graph.ScatterPlot;
+//import com.example.stepcounter.graph.ScatterPlot;
 import com.example.stepcounter.services.StepCounterService;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -125,7 +125,7 @@ public class StepCounterActivity extends AppCompatActivity {
 
     private void resetStepCountData() {
         editor.putInt(StepCounterService.stepDbName, 0);
-        editor.putString(RoutingActivity.routePoints, "");
+//        editor.putString(RoutingActivity.routePoints, "");
 //        ScatterPlot.getInstance().clearPoints();
         editor.apply();
     }
