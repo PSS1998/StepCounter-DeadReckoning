@@ -28,9 +28,9 @@
             android:exported="false" />
 
         <activity
-            android:name=".GraphActivity"
+            android:name=".RoutingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="activity_graph"
+            android:label="activity_routing"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat">
 

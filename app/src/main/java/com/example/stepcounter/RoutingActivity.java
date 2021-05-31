@@ -6,28 +6,37 @@ import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stepcounter.graph.ScatterPlot;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class GraphActivity extends AppCompatActivity {
+public class RoutingActivity extends AppCompatActivity {
 
     public static final String dbName = "StepCounter";
-    public static final String stepDbName = "stepCounts";
 
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    public static final String routePoints = "routePoints";
 
+    public static SharedPreferences sharedPreferences;
+    public static SharedPreferences.Editor editor;
+
+    private static int stepState = 0;
+    private static int stepFlag = 0;
     private Handler mHandler = new Handler();
     private Timer mTimer;
+    private ImageView imageView;
 
     Orientation orientation;
 
@@ -43,7 +52,7 @@ public class GraphActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_graph);
+        setContentView(R.layout.activity_routing);
 
         setSharedPreferences();
 
@@ -54,10 +63,12 @@ public class GraphActivity extends AppCompatActivity {
 
         //defining views
         mLinearLayout = findViewById(R.id.linearLayoutGraph);
+        imageView = findViewById(R.id.compass);
 
         //setting up graph with origin
         scatterPlot = new ScatterPlot("Position");
         scatterPlot.addPoint(0, 0);
+//        scatterPlot = ScatterPlot.getInstance();
         mLinearLayout.addView(scatterPlot.getGraphView(getApplicationContext()));
 
 
@@ -93,32 +104,71 @@ public class GraphActivity extends AppCompatActivity {
 
                     float degrees = (float)((orientationAngles[0] < 0) ? (2.0 * Math.PI + orientationAngles[0]) : orientationAngles[0]);
                     degrees *= (180.0 / Math.PI);
+                    float rotation = degrees;
                     degrees = Filter.moving_average_heading(degrees);
 
                     TextView textView = (TextView) findViewById(R.id.textView);
                     textView.setText(String.valueOf(degrees));
 
-                    int stepCounts = sharedPreferences.getInt(stepDbName, 0);
-                    if((stepCounts - stepCount) > 0) {
-                        stepCount = stepCounts;
-                        float oPointX = scatterPlot.getLastYPoint();
-                        float oPointY = scatterPlot.getLastXPoint();
-                        float magHeading = 0;
-                        if(magneticHeading.size() > 3)
-                            magHeading = magneticHeading.get(magneticHeading.size()-4);
-                        else
-                            magHeading = magneticHeading.get(magneticHeading.size()-1);
-                        magneticHeading.clear();
-                        oPointX += (float)(10 * Math.cos(magHeading));
-                        oPointY += (float)(10 * Math.sin(magHeading));
-                        scatterPlot.addPoint(oPointY, oPointX);
-                        mLinearLayout.removeAllViews();
-                        mLinearLayout.addView(scatterPlot.getGraphView(getApplicationContext()));
+//                    int stepCounts = sharedPreferences.getInt(stepDbName, 0);
+                    int stepCounts = getSteps();
+                    System.out.println(stepCounts);
+                    imageView.setRotation(rotation);
+                    if(stepCounts > 0) {
+//                    if(stepCount - stepCounts> 0) {
+//                        stepCount = stepCounts;
+                        updateRoute(calculatePoint());
+
+
+
+
                     }
                 }
             });
         }
     }
+
+    public void updateRoute (Point point) {
+        scatterPlot.addPoint(point.getPointY(), point.getPointX());
+        mLinearLayout.removeAllViews();
+        mLinearLayout.addView(scatterPlot.getGraphView(getApplicationContext()));
+    }
+
+    public Point calculatePoint() {
+        float pointX = scatterPlot.getLastYPoint();
+        float pointY = scatterPlot.getLastXPoint();
+        float magHeading = 0;
+        if(magneticHeading.size() > 3)
+            magHeading = magneticHeading.get(magneticHeading.size()-4);
+        else
+            magHeading = magneticHeading.get(magneticHeading.size()-1);
+        magneticHeading.clear();
+        pointX += (float)(10 * Math.cos(magHeading));
+        pointY += (float)(10 * Math.sin(magHeading));
+        return new Point(pointX, pointY);
+    }
+
+
+    public static int getSteps() {
+        stepFlag = (stepFlag + 1) % 5;
+        stepState = (stepState + 1) % 50;
+        if (stepState < 50) { // 1 2 2 1 2 2 1 2 2
+            if(stepFlag == 4) {
+                return 1;
+            }
+            return 0;
+        }
+//        else if (stepState < 100) {
+//            if(stepFlag == 4) {
+//                return 1;
+//            }
+//            return 0;
+//        }
+
+        return 0;
+    }
+
+
 
 
 }
