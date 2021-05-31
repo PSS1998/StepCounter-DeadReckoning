@@ -8,6 +8,12 @@ public class Vector {
     private double y;
     private double z;
 
+    public Vector (Vector vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+        this.z = vector.z;
+    }
+
     public Vector(double x, double y, double z) {
         this.x = x;
         this.y = y;
@@ -65,6 +71,13 @@ public class Vector {
         return this;
     }
 
+    public Vector sub(Vector vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+        this.z -= vector.z;
+        return this;
+    }
+
     public static Vector add(Vector firstVector, Vector secondVector) {
         return new Vector(firstVector.x + secondVector.x, firstVector.y + secondVector.y, firstVector.z + secondVector.z);
     }
@@ -104,5 +117,9 @@ public class Vector {
         this.y = Math.abs(this.y) > ROUND_THRESHOLD ? this.y : 0;
         this.z = Math.abs(this.z) > ROUND_THRESHOLD ? this.z : 0;
         return this;
+    }
+
+    public double distanceFrom(Vector vector) {
+        return new Vector(this).sub(vector).getAbsoluteValue();
     }
 }
