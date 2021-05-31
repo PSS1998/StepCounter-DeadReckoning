@@ -1,44 +1,48 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_layout_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    tools:context="com.example.stepcounter.activity.GraphActivity"
-    android:id="@+id/graph_layout_relative">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_weight="1"
-        android:text="TextView" />
+    tools:context="com.example.stepcounter.activity.GraphActivity">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayoutGraph"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayoutGraph">
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
 
     </LinearLayout>
 
-<!--    <android.support.design.widget.FloatingActionButton-->
-<!--        android:id="@+id/fab"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:tint="@android:color/white"-->
-<!--        android:backgroundTint="#ff0099ff"-->
-<!--        app:borderWidth="0dp"-->
-<!--        app:fabSize="normal"-->
-<!--        app:srcCompat="@drawable/ic_play_arrow_black_24dp" />-->
+    <com.github.mikephil.charting.charts.ScatterChart
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="100dp" />
+
+    <com.example.stepcounter.MapScaleView
+        android:id="@+id/mapScaleView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignStart="@id/linearLayoutGraph"
+        android:layout_alignBottom="@id/linearLayoutGraph"
+        app:layout_constraintBottom_toBottomOf="@id/map"
+        app:layout_constraintEnd_toEndOf="@id/map" />
+
+    <!--    <android.support.design.widget.FloatingActionButton-->
+    <!--        android:id="@+id/fab"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_alignParentEnd="true"-->
+    <!--        android:tint="@android:color/white"-->
+    <!--        android:backgroundTint="#ff0099ff"-->
+    <!--        app:borderWidth="0dp"-->
+    <!--        app:fabSize="normal"-->
+    <!--        app:srcCompat="@drawable/ic_play_arrow_black_24dp" />-->
 
 </RelativeLayout>
 
