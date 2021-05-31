@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.stepcounter.graph.ScatterPlot;
 import com.example.stepcounter.services.StepCounterService;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -50,6 +51,15 @@ public class StepCounterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 resetStepCountData();
+            }
+        });
+
+        Button graphButton = findViewById(R.id.graphButton);
+        graphButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(StepCounterActivity.this, RoutingActivity.class);
+                startActivity(myIntent);
             }
         });
 
@@ -115,6 +125,8 @@ public class StepCounterActivity extends AppCompatActivity {
 
     private void resetStepCountData() {
         editor.putInt(StepCounterService.stepDbName, 0);
+        editor.putString(RoutingActivity.routePoints, "");
+//        ScatterPlot.getInstance().clearPoints();
         editor.apply();
     }
 

@@ -3,6 +3,11 @@ package com.example.stepcounter.graph;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.example.stepcounter.Point;
+import com.example.stepcounter.RoutingActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
@@ -11,19 +16,44 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScatterPlot {
 
     private String seriesName;
-    private ArrayList<Double> xList;
-    private ArrayList<Double> yList;
-
+    private static ArrayList<Double> xList;
+    private static ArrayList<Double> yList;
+    private static ScatterPlot scatterPlot;
     public ScatterPlot(String seriesName) {
-        this.seriesName = seriesName;
+
         xList = new ArrayList<>();
         yList = new ArrayList<>();
+        this.seriesName = seriesName;
+//        ArrayList <Point> points = loadPointsFromSharedPreferences();
+//        if (points.size() > 0) {
+//            HashMap<String, ArrayList<Double>> pointsMap = Point.convertPointListToMap(points);
+//            xList = pointsMap.get("pointsX");
+//            yList = pointsMap.get("pointsY");
+//        }
+
     }
+
+//    public static ScatterPlot getInstance () {
+//        if (scatterPlot == null) {
+//            scatterPlot = new ScatterPlot("Position");
+//            scatterPlot.addPoint(0,0);
+//        }
+//        ArrayList <Point> points = loadPointsFromSharedPreferences();
+//        if (points.size() > 0) {
+//            HashMap<String, ArrayList<Double>> pointsMap = Point.convertPointListToMap(points);
+//            xList = pointsMap.get("pointsX");
+//            yList = pointsMap.get("pointsY");
+//        }
+//        return scatterPlot;
+//    }
 
     public GraphicalView getGraphView(Context context) {
 
@@ -90,6 +120,7 @@ public class ScatterPlot {
     public void addPoint(double x, double y) {
         xList.add(x);
         yList.add(y);
+        savePointInSharePreferences(new Point(x, y));
     }
 
     public float getLastXPoint() {
@@ -102,11 +133,6 @@ public class ScatterPlot {
         return (float)y;
     }
 
-    public void clearSet() {
-        xList.clear();
-        yList.clear();
-    }
-
     private double getMaxBound() {
         double max = 0;
         for (double num : xList)
@@ -117,4 +143,25 @@ public class ScatterPlot {
                 max = num;
         return (Math.abs(max) / 100) * 100 + 100; //rounding up to the nearest hundred
     }
+
+    public void savePointInSharePreferences (Point point) {
+        Gson gson = new Gson();
+        ArrayList <Point> points = loadPointsFromSharedPreferences();
+        points.add(point);
+        String json = gson.toJson(points);
+        RoutingActivity.editor.putString(RoutingActivity.routePoints, json);
+        RoutingActivity.editor.apply();
+    }
+
+    public static ArrayList<Point> loadPointsFromSharedPreferences () {
+        Gson gson = new Gson();
+        String json = RoutingActivity.sharedPreferences.getString(RoutingActivity.routePoints, null);
+        Type type = new TypeToken<ArrayList<Point>>() {}.getType();
+        ArrayList <Point> points  = gson.fromJson(json, type);
+        if (points == null) {
+            points = new ArrayList<Point>();
+        }
+        return points;
+    }
+
 }
