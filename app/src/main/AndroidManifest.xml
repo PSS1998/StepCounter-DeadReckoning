@@ -26,6 +26,10 @@
             android:name=".services.StepCounterService"
             android:enabled="true"
             android:exported="false" />
+        <service
+            android:name=".services.RoutingService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
             android:name=".RoutingActivity"

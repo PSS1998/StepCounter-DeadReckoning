@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.stepcounter.graph.ScatterPlot;
+import com.example.stepcounter.services.RoutingService;
 import com.example.stepcounter.services.StepCounterService;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -30,6 +30,7 @@ public class StepCounterActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private SharedPreferences.Editor editor;
+    private Intent routeIntent;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -95,10 +96,12 @@ public class StepCounterActivity extends AppCompatActivity {
     private void startStepCounter() {
         Intent intent = new Intent(this, StepCounterService.class);
         startService(intent);
+
+        routeIntent = new Intent(this, RoutingService.class);
+        startService(routeIntent);
     }
 
     private void updateStepCounter(String steps, String km, String calories) {
-//        steps = "510";
         stepsText.setText(steps);
         distanceText.setText(km);
         caloryText.setText(calories);
@@ -125,8 +128,10 @@ public class StepCounterActivity extends AppCompatActivity {
 
     private void resetStepCountData() {
         editor.putInt(StepCounterService.stepDbName, 0);
-        editor.putString(RoutingActivity.routePoints, "");
-//        ScatterPlot.getInstance().clearPoints();
+//        editor.putString(RoutingService.routePoints, "");
+        RoutingService.getScatter().clearPoints();
+        stopService(routeIntent);
+        startService(routeIntent);
         editor.apply();
     }
 

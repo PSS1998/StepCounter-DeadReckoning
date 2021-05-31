@@ -26,13 +26,13 @@
             app:layout_constraintVertical_bias="0.056" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_weight="1"
-        android:text="TextView" />
+<!--    <TextView-->
+<!--        android:id="@+id/textView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerInParent="true"-->
+<!--        android:layout_weight="1"-->
+<!--        android:text="TextView" />-->
 
     <LinearLayout
         android:orientation="horizontal"
