@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -32,6 +33,8 @@ public class RoutingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routing);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setSharedPreferences();
 
@@ -68,7 +71,7 @@ public class RoutingActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     float rotation = RoutingService.getRotation();
-                    imageView.setRotation(rotation);
+                    imageView.setRotation(-rotation);
                     viewRoute();
                 }
             });
