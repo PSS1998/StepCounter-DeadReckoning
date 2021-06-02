@@ -42,5 +42,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.mikhaellopez:circularprogressbar:3.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.jjoe64:graphview:4.2.1'
     api files('src/libs/achartengine-1.1.0.jar')
 }

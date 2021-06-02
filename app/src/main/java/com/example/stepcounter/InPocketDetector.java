@@ -8,6 +8,8 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.stepcounter.services.StepCounterService;
+
 import java.math.BigDecimal;
 
 public class InPocketDetector implements SensorEventListener {
@@ -22,9 +24,9 @@ public class InPocketDetector implements SensorEventListener {
     float[] g = {0, 0, 0};
     int inclination = -1;
 
-    StepCounterActivity main;
+    StepCounterService main;
 
-    public InPocketDetector(StepCounterActivity main, Context context){
+    public InPocketDetector(StepCounterService main, Context context){
         this.main = main;
         mySensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 

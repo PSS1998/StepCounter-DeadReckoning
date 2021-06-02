@@ -33,16 +33,12 @@ public class StepCounterActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private Intent routeIntent;
 
-    InPocketDetector inPocketDetector;
-    Context context = this;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_counter);
-
-        inPocketDetector = new InPocketDetector(this, context);
 
         setSharedPreferences();
         progress = findViewById(R.id.progressBar);

@@ -23,12 +23,18 @@ import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.annotation.RequiresApi;
 
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,9 +67,51 @@ public class StepCounterService extends Service {
     BroadcastReceiver broadcastReceiver;
 
 
+    private static int SMOOTHING_WINDOW_SIZE = 20;
+
+    private float mRawAccelValues[] = new float[3];
+
+    // smoothing accelerometer signal variables
+    private float mAccelValueHistory[][] = new float[3][SMOOTHING_WINDOW_SIZE];
+    private float mRunningAccelTotal[] = new float[3];
+    private float mCurAccelAvg[] = new float[3];
+    private int mCurReadIndex = 0;
+
+    public static float mStepCounter = 0;
+
+    private double mGraph1LastXValue = 0d;
+    private double mGraph2LastXValue = 0d;
+
+    public static LineGraphSeries<DataPoint> mSeries1;
+    public static LineGraphSeries<DataPoint> mSeries2;
+
+    private double lastMag = 0d;
+    private double avgMag = 0d;
+    private double netMag = 0d;
+
+    //peak detection variables
+    private double lastXPoint = 1d;
+    private int windowSize = 10;
+
+    InPocketDetector inPocketDetector;
+    Context context = this;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        inPocketDetector = new InPocketDetector(this, context);
+
+        if(StepCounterService.mSeries1 == null) {
+            StepCounterService.mSeries1 = new LineGraphSeries<>();
+        }
+        if(StepCounterService.mSeries2 == null) {
+            StepCounterService.mSeries2 = new LineGraphSeries<>();
+        }
+
+        System.out.println(StepCounterService.mSeries1);
+
         setSharedPreferences();
         setTimer();
 
@@ -89,37 +137,59 @@ public class StepCounterService extends Service {
                         StepNum++;
                     }
                     else {
-                        float x_acceleration = sensorEvent.values[0];
-                        float y_acceleration = sensorEvent.values[1];
-                        float z_acceleration = sensorEvent.values[2];
+                        mRawAccelValues[0] = sensorEvent.values[0];
+                        mRawAccelValues[1] = sensorEvent.values[1];
+                        mRawAccelValues[2] = sensorEvent.values[2];
 
-                        double Magnitude = Math.sqrt(x_acceleration * x_acceleration + y_acceleration * y_acceleration + z_acceleration * z_acceleration);
-                        double MagnitudeDelta = Magnitude - MagnitudePrevious;
+                        lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
 
-                        MagnitudePrevious = Magnitude;
-                        if(ignore_activity_recognition == 1){
-                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
-                                bufferStep++;
-                            }
-                            if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-                                bufferStep++;
-                            }
+                        for (int i = 0; i < 3; i++) {
+                            mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
+                            mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
+                            mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
+                            mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
                         }
-                        else {
-                            if (on_foot == 1) {
-                                if (walking == 1) {
-                                    if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
-                                        bufferStep++;
-                                    }
-                                    if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-                                        bufferStep++;
-                                    }
-                                }
-                                if (running == 1 && MagnitudeDelta > 16 && MagnitudeDelta < 35) {
-                                    bufferStep++;
-                                }
-                            }
+                        mCurReadIndex++;
+                        if(mCurReadIndex >= SMOOTHING_WINDOW_SIZE){
+                            mCurReadIndex = 0;
                         }
+
+                        avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
+
+                        netMag = lastMag - avgMag; //removes gravity effect
+
+                        //update graph data points
+                        mGraph1LastXValue += 1d;
+                        mSeries1.appendData(new DataPoint(mGraph1LastXValue, lastMag), true, 60);
+
+                        mGraph2LastXValue += 1d;
+                        mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
+
+                        peakDetection();
+
+//                        if(ignore_activity_recognition == 1){
+//                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
+//                                bufferStep++;
+//                            }
+//                            if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
+//                                bufferStep++;
+//                            }
+//                        }
+//                        else {
+//                            if (on_foot == 1) {
+//                                if (walking == 1) {
+//                                    if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
+//                                        bufferStep++;
+//                                    }
+//                                    if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
+//                                        bufferStep++;
+//                                    }
+//                                }
+//                                if (running == 1 && MagnitudeDelta > 16 && MagnitudeDelta < 35) {
+//                                    bufferStep++;
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
@@ -200,6 +270,7 @@ public class StepCounterService extends Service {
                     }
                     else {
                         if (bufferStep < 6 && bufferStep > 0) {
+                            System.out.println(stepCounts);
                             stepCounts++;
                             editor.putInt(stepDbName, stepCounts);
                         }
@@ -308,6 +379,73 @@ public class StepCounterService extends Service {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void peakDetection(){
 
+        double stepThreshold = 0.8d;
+        double noiseThreshold = 13d;
+
+        if(ignore_activity_recognition == 1){
+            if (InPocketDetector.pocket == 0) {
+                stepThreshold = 0.8d;
+                noiseThreshold = 2.5d;
+            }
+            if (InPocketDetector.pocket == 1) {
+                stepThreshold = 4d;
+                noiseThreshold = 13d;
+            }
+        }
+        else {
+            if (on_foot == 1) {
+                if (walking == 1) {
+                    if (InPocketDetector.pocket == 0) {
+                        stepThreshold = 0.8d;
+                        noiseThreshold = 2.5d;
+                    }
+                    if (InPocketDetector.pocket == 1) {
+                        stepThreshold = 4d;
+                        noiseThreshold = 13d;
+                    }
+                }
+                if (running == 1) {
+                    stepThreshold = 16d;
+                    noiseThreshold = 35d;
+                }
+            }
+        }
+
+        double highestValX = mSeries2.getHighestValueX();
+
+        if(highestValX - lastXPoint < windowSize){
+            return;
+        }
+
+        Iterator<DataPoint> valuesInWindow = mSeries2.getValues(lastXPoint,highestValX);
+
+        lastXPoint = highestValX;
+
+        double forwardSlope = 0d;
+        double downwardSlope = 0d;
+
+        List<DataPoint> dataPointList = new ArrayList<DataPoint>();
+        valuesInWindow.forEachRemaining(dataPointList::add); //This requires API 24 or higher
+
+        int foundStep = 0;
+
+        for(int i = 0; i<dataPointList.size(); i++){
+            if(i == 0) continue;
+            else if(i < dataPointList.size() - 1){
+                forwardSlope = dataPointList.get(i+1).getY() - dataPointList.get(i).getY();
+                downwardSlope = dataPointList.get(i).getY() - dataPointList.get(i - 1).getY();
+
+                if(forwardSlope < 0 && downwardSlope > 0 && dataPointList.get(i).getY() > stepThreshold && dataPointList.get(i).getY() < noiseThreshold){
+                    foundStep = 1;
+                }
+            }
+        }
+        if(foundStep == 1){
+            bufferStep+=1;
+        }
+    }
 
 }
