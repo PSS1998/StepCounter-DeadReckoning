@@ -32,8 +32,8 @@ public class Accelerometer extends GameSensorListener {
         if (event != null) {
             if (timestamp == 0)
                 timestamp = event.timestamp;
-//            acceleration = Filter.LPF(event.values.clone(), acceleration);
-            acceleration = Filter.LPF(acceleration, event.values.clone());
+            acceleration = Filter.LPF(event.values.clone(), acceleration);
+//            acceleration = Filter.LPF(acceleration, event.values.clone());
 //            System.arraycopy(event.values, 0, acceleration, 0, acceleration.length);
             timestamp = event.timestamp;
         }

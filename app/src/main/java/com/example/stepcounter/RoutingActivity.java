@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -81,6 +82,7 @@ public class RoutingActivity extends AppCompatActivity {
     public void viewRoute () {
         mLinearLayout.removeAllViews();
         mLinearLayout.addView(scatterPlot.getGraphView(getApplicationContext()));
+
     }
 
 

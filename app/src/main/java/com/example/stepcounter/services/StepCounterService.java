@@ -242,7 +242,7 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf(ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount)));
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int)ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -290,7 +290,7 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            updateNotification(String.valueOf(stepCount), String.valueOf(ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount)));
+            updateNotification(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }

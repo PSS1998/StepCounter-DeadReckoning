@@ -15,9 +15,9 @@ public final class ExtraFunctions {
         return (float)degrees;
     }
 
-    public static int calculateDistance(int num_steps) {
+    public static float calculateDistance(int num_steps) {
         double distance = num_steps*SettingsActivity.height*0.3937*0.414*2.54e-2;
-        return (int) distance;
+        return (float) distance;
     }
 
 }

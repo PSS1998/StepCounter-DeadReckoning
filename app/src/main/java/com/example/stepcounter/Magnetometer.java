@@ -33,7 +33,7 @@ public class Magnetometer extends com.example.stepcounter.GameSensorListener {
             if (timestamp == 0)
                 timestamp = event.timestamp;
             magneticField = Filter.LPF(event.values.clone(), magneticField);
-            magneticField = Filter.LPF(magneticField, event.values.clone());
+//            magneticField = Filter.LPF(magneticField, event.values.clone());
 //            System.arraycopy(event.values, 0, magneticField, 0, magneticField.length);
             timestamp = event.timestamp;
         }
