@@ -9,6 +9,8 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
+
+import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
@@ -82,8 +84,7 @@ public class RoutingService extends Service {
                     orientation.updateOrientationAngles();
                     float[] orientationAngles = orientation.getOrientationAngles();
                     magneticHeading.add(orientationAngles[0]);
-                    float degrees = (float)((orientationAngles[0] < 0) ? (2.0 * Math.PI + orientationAngles[0]) : orientationAngles[0]);
-                    degrees *= (180.0 / Math.PI);
+                    float degrees = ExtraFunctions.radsToDegrees(orientationAngles[0]);
                     rotation = degrees;
 //                    degrees = Filter.moving_average_heading(degrees);
 //
@@ -120,8 +121,8 @@ public class RoutingService extends Service {
         else
             magHeading = magneticHeading.get(magneticHeading.size()-1);
         magneticHeading.clear();
-        pointX += (float)(10 * Math.cos(magHeading));
-        pointY += (float)(10 * Math.sin(magHeading));
+        pointX += (float)(ExtraFunctions.calculateDistance(1) * Math.cos(magHeading));
+        pointY += (float)(ExtraFunctions.calculateDistance(1) * Math.sin(magHeading));
         return new Point(pointX, pointY);
     }
 

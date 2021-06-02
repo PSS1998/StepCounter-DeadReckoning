@@ -26,6 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.annotation.RequiresApi;
 
 import com.example.stepcounter.Constants;
+import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
@@ -241,8 +242,7 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        double distance = initStepCount*SettingsActivity.height*0.3937*0.414*2.54e-2;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int) distance), String.valueOf(calculateCalories(initStepCount)));
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf(ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -290,8 +290,7 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            double distance = stepCount*SettingsActivity.height*0.3937*0.414*2.54e-2;
-            updateNotification(String.valueOf(stepCount), String.valueOf((int) distance), String.valueOf(calculateCalories(stepCount)));
+            updateNotification(String.valueOf(stepCount), String.valueOf(ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }

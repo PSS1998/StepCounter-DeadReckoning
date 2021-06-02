@@ -122,7 +122,7 @@ public class StepCounterActivity extends AppCompatActivity {
 
     private void updatestepCounterLayout(int stepCount) {
         try {
-            updateStepCounter(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.4)), String.valueOf(StepCounterService.calculateCalories(stepCount)));
+            updateStepCounter(String.valueOf(stepCount), String.valueOf(ExtraFunctions.calculateDistance(stepCount)), String.valueOf(StepCounterService.calculateCalories(stepCount)));
 
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
