@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -32,11 +33,17 @@ public class StepCounterActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private Intent routeIntent;
 
+    InPocketDetector inPocketDetector;
+    Context context = this;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_counter);
+
+        inPocketDetector = new InPocketDetector(this, context);
+
         setSharedPreferences();
         progress = findViewById(R.id.progressBar);
         stepsText = findViewById(R.id.stepsInfo);

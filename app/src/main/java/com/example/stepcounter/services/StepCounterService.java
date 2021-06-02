@@ -6,8 +6,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
@@ -20,10 +22,12 @@ import android.os.IBinder;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.stepcounter.Constants;
+import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
-import com.example.stepcounter.StepCounterActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,9 +47,18 @@ public class StepCounterService extends Service {
     private boolean isStepDetectorSensorPresent = false;
     private float StepNum = 0;
 
+    int on_foot = 0;
+    int walking = 0;
+    int running = 0;
+
+    // for debugging
+    int ignore_activity_recognition = 1;
+
     //notification
     public static final String CHANNEL_ID = "124578";
     private static final int NOTIFICATION_ID = 513;
+
+    BroadcastReceiver broadcastReceiver;
 
 
     @Override
@@ -53,7 +66,6 @@ public class StepCounterService extends Service {
         super.onCreate();
         setSharedPreferences();
         setTimer();
-
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = null;
@@ -85,8 +97,28 @@ public class StepCounterService extends Service {
                         double MagnitudeDelta = Magnitude - MagnitudePrevious;
 
                         MagnitudePrevious = Magnitude;
-                        if (MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-                            bufferStep++;
+                        if(ignore_activity_recognition == 1){
+                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
+                                bufferStep++;
+                            }
+                            if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
+                                bufferStep++;
+                            }
+                        }
+                        else {
+                            if (on_foot == 1) {
+                                if (walking == 1) {
+                                    if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
+                                        bufferStep++;
+                                    }
+                                    if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
+                                        bufferStep++;
+                                    }
+                                }
+                                if (running == 1 && MagnitudeDelta > 16 && MagnitudeDelta < 35) {
+                                    bufferStep++;
+                                }
+                            }
                         }
                     }
                 }
@@ -100,6 +132,23 @@ public class StepCounterService extends Service {
         } else {
             // TODO: 4/22/2021 show error sensor not found
         }
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Constants.BROADCAST_DETECTED_ACTIVITY)) {
+                    int on_foot_confidence = intent.getIntExtra("on_foot_confidence", 0);
+                    int walking_confidence = intent.getIntExtra("walking_confidence", 0);
+                    int running_confidence = intent.getIntExtra("running_confidence", 0);
+                    handleUserActivity(on_foot_confidence, walking_confidence, running_confidence);
+                }
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
+                new IntentFilter(Constants.BROADCAST_DETECTED_ACTIVITY));
+
+        startTracking();
 
     }
 
@@ -226,12 +275,39 @@ public class StepCounterService extends Service {
         }
     }
 
-
-
     public static int calculateCalories(Integer stepCounts) {
         int m = 70;//kg
         int a = 5;//m/s2
         double h = 1.78;
         return (int) (stepCounts * ((0.035 * m) + ((a / h) * (0.029 * m))) / 150);
     }
+
+
+
+    private void handleUserActivity(int on_foot_confidence, int walking_confidence, int running_confidence) {
+        on_foot = 0;
+        walking = 1;
+        running = 0;
+        if(on_foot_confidence > 70){
+            on_foot = 1;
+            if(running_confidence > walking_confidence){
+                running = 1;
+                walking = 0;
+            }
+        }
+    }
+
+    private void startTracking() {
+        Intent intent = new Intent(StepCounterService.this, BackgroundDetectedActivitiesService.class);
+        startService(intent);
+    }
+
+    private void stopTracking() {
+        Intent intent = new Intent(StepCounterService.this, BackgroundDetectedActivitiesService.class);
+        stopService(intent);
+    }
+
+
+
+
 }
