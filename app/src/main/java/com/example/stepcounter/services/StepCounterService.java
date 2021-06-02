@@ -29,6 +29,7 @@ import com.example.stepcounter.Constants;
 import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
+import com.example.stepcounter.SettingsActivity;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -58,7 +59,7 @@ public class StepCounterService extends Service {
     int running = 0;
 
     // for debugging
-    int ignore_activity_recognition = 1;
+    public static int ignore_activity_recognition = 1;
 
     //notification
     public static final String CHANNEL_ID = "124578";
@@ -240,7 +241,8 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int) (initStepCount / 1.5)), String.valueOf(calculateCalories(initStepCount)));
+        double distance = initStepCount*SettingsActivity.height*0.3937*0.414*2.54e-2;
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int) distance), String.valueOf(calculateCalories(initStepCount)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -288,8 +290,8 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            updateNotification(String.valueOf(stepCount), String.valueOf((int) (stepCount / 1.4)), String.valueOf(calculateCalories(stepCount)));
-
+            double distance = stepCount*SettingsActivity.height*0.3937*0.414*2.54e-2;
+            updateNotification(String.valueOf(stepCount), String.valueOf((int) distance), String.valueOf(calculateCalories(stepCount)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }
@@ -349,7 +351,7 @@ public class StepCounterService extends Service {
     public static int calculateCalories(Integer stepCounts) {
         int m = 70;//kg
         int a = 5;//m/s2
-        double h = 1.78;
+        double h = SettingsActivity.height;
         return (int) (stepCounts * ((0.035 * m) + ((a / h) * (0.029 * m))) / 150);
     }
 

@@ -11,6 +11,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.stepcounter.services.StepCounterService;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        textView = (TextView) findViewById(R.id.info);
+//        textView = (TextView) findViewById(R.id.info);
 //        button = (Button) findViewById(R.id.updateButton);
 //        Orientation orientation = Orientation.getInstance(sensorManager);
 //
@@ -66,11 +67,19 @@ public class MainActivity extends AppCompatActivity {
 
         Button startWalking = findViewById(R.id.stratWalking);
         startWalking.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 Intent stepsIntent = new Intent(MainActivity.this, StepCounterActivity.class);
                 startActivity(stepsIntent);
+            }
+        });
+
+        ImageView settings = findViewById(R.id.imageView2);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
             }
         });
 
