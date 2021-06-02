@@ -14,9 +14,10 @@ import com.example.stepcounter.services.StepCounterService;
 public class SettingsActivity extends AppCompatActivity {
 
     public static float height = 167;
+    public static int activityRecognitionEnable = 1;
 
     private EditText etHeight;
-    private Switch activityRecognitionEnable;
+    private Switch activityRecognitionEnableSwitch;
     private Button stepCounterDebugButton;
     private Button saveButton;
 
@@ -26,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         etHeight = (EditText) findViewById(R.id.etRheight);
-        activityRecognitionEnable = (Switch) findViewById(R.id.switch1);
+        activityRecognitionEnableSwitch = (Switch) findViewById(R.id.switch1);
         saveButton = (Button) findViewById(R.id.button_save);
         stepCounterDebugButton = (Button) findViewById(R.id.button_step_counter_debug);
 
@@ -39,11 +40,11 @@ public class SettingsActivity extends AppCompatActivity {
                     height = Float.valueOf(height_text);
                 }
 
-                if(activityRecognitionEnable.isChecked()){
-                    StepCounterService.ignore_activity_recognition = 0;
+                if(activityRecognitionEnableSwitch.isChecked()){
+                    activityRecognitionEnable = 1;
                 }
                 else{
-                    StepCounterService.ignore_activity_recognition = 1;
+                    activityRecognitionEnable = 0;
                 }
 
                 System.out.println(StepCounterService.ignore_activity_recognition);

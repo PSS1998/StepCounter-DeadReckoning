@@ -30,6 +30,7 @@ import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
+import com.example.stepcounter.RoutingActivity;
 import com.example.stepcounter.SettingsActivity;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -360,7 +361,7 @@ public class StepCounterService extends Service {
         on_foot = 0;
         walking = 1;
         running = 0;
-        if(on_foot_confidence > 70){
+        if(on_foot_confidence > Constants.CONFIDENCE){
             on_foot = 1;
             if(running_confidence > walking_confidence){
                 running = 1;
@@ -386,6 +387,17 @@ public class StepCounterService extends Service {
         double stepThreshold = 0.8d;
         double noiseThreshold = 13d;
 
+        if(SettingsActivity.activityRecognitionEnable == 1){
+            ignore_activity_recognition = 0;
+        }
+        if(SettingsActivity.activityRecognitionEnable == 0){
+            ignore_activity_recognition = 1;
+        }
+
+        if(on_foot == 0 && RoutingActivity.inRounting == 1 && ignore_activity_recognition == 0){
+            ignore_activity_recognition = 1;
+        }
+
         if(ignore_activity_recognition == 1){
             if (InPocketDetector.pocket == 0) {
                 stepThreshold = 0.8d;
@@ -397,21 +409,19 @@ public class StepCounterService extends Service {
             }
         }
         else {
-            if (on_foot == 1) {
-                if (walking == 1) {
-                    if (InPocketDetector.pocket == 0) {
-                        stepThreshold = 0.8d;
-                        noiseThreshold = 2.5d;
-                    }
-                    if (InPocketDetector.pocket == 1) {
-                        stepThreshold = 4d;
-                        noiseThreshold = 13d;
-                    }
+            if (walking == 1) {
+                if (InPocketDetector.pocket == 0) {
+                    stepThreshold = 0.8d;
+                    noiseThreshold = 2.5d;
                 }
-                if (running == 1) {
-                    stepThreshold = 16d;
-                    noiseThreshold = 35d;
+                if (InPocketDetector.pocket == 1) {
+                    stepThreshold = 4d;
+                    noiseThreshold = 13d;
                 }
+            }
+            if (running == 1) {
+                stepThreshold = 16d;
+                noiseThreshold = 35d;
             }
         }
 
@@ -445,7 +455,12 @@ public class StepCounterService extends Service {
             }
         }
         if(foundStep == 1){
-            bufferStep+=1;
+            if(ignore_activity_recognition == 0 && on_foot == 1) {
+                bufferStep += 1;
+            }
+            if(ignore_activity_recognition == 1){
+                bufferStep += 1;
+            }
         }
     }
 
