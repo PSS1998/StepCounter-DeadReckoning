@@ -96,7 +96,7 @@ public class StepCounterService extends Service {
     private double lastXPoint = 1d;
     private int windowSize = 10;
 
-    private static final int STEP_DELAY_NS = 250000000;
+    private static final int STEP_DELAY_NS = 200000000;
     private long timeNs = 0;
     private long lastStepTimeNs = 0;
 
@@ -242,7 +242,7 @@ public class StepCounterService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 250);
+        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 200);
     }
 
     @Override
@@ -389,7 +389,7 @@ public class StepCounterService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void peakDetection(){
 
-        double stepThreshold = 1d;
+        double stepThreshold = 0.8d;
         double noiseThreshold = 13d;
 
         if(SettingsActivity.activityRecognitionEnable == 1){
@@ -405,7 +405,7 @@ public class StepCounterService extends Service {
 
         if(ignore_activity_recognition == 1){
             if (InPocketDetector.pocket == 0) {
-                stepThreshold = 1d;
+                stepThreshold = 0.8d;
                 noiseThreshold = 2.5d;
             }
             if (InPocketDetector.pocket == 1) {
@@ -416,7 +416,7 @@ public class StepCounterService extends Service {
         else {
             if (walking == 1) {
                 if (InPocketDetector.pocket == 0) {
-                    stepThreshold = 1d;
+                    stepThreshold = 0.8d;
                     noiseThreshold = 2.5d;
                 }
                 if (InPocketDetector.pocket == 1) {
