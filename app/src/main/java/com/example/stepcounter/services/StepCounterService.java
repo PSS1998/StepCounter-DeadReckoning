@@ -28,6 +28,7 @@ import androidx.annotation.RequiresApi;
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.InPocketDetector;
+import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
 import com.example.stepcounter.RoutingActivity;
@@ -103,12 +104,16 @@ public class StepCounterService extends Service {
     InPocketDetector inPocketDetector;
     Context context = this;
 
+    LocalDirection localDirection;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         inPocketDetector = new InPocketDetector(this, context);
+
+        localDirection = new LocalDirection(context);
 
         if(StepCounterService.mSeries1 == null) {
             StepCounterService.mSeries1 = new LineGraphSeries<>();

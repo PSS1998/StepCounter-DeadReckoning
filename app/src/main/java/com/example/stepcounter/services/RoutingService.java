@@ -11,6 +11,8 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.example.stepcounter.ExtraFunctions;
+import com.example.stepcounter.Filter;
+import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
@@ -83,6 +85,10 @@ public class RoutingService extends Service {
                 public void run() {
                     orientation.updateOrientationAngles();
                     float[] orientationAngles = orientation.getOrientationAngles();
+                    double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
+                    float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
+//                    magneticHeading.add(compHeading);
+//                    float degrees = ExtraFunctions.radsToDegrees(compHeading);
                     magneticHeading.add(orientationAngles[0]);
                     float degrees = ExtraFunctions.radsToDegrees(orientationAngles[0]);
                     rotation = degrees;

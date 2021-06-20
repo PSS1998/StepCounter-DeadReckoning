@@ -74,12 +74,21 @@ public class Filter {
         return moving_average;
     }
 
+    // Low Pass Filter
     public static float[] LPF(float[] input, float[] output) {
         if ( output == null ) return input;
         for ( int i=0; i<input.length; i++ ) {
             output[i] = output[i] + ALPHA * (input[i] - output[i]);
         }
         return output;
+    }
+
+    // Complementary Filter
+    public static float calcComplementaryHeading(float magneticHeading, float gyroscopeHeading) {
+        double gyroHeading = (gyroscopeHeading > Math.PI) ? (gyroscopeHeading - 2.0 * Math.PI) : (gyroscopeHeading < -Math.PI) ? (gyroscopeHeading + 2.0 * Math.PI) : gyroscopeHeading;
+        double compHeading = (0.5*magneticHeading + 0.5*gyroHeading);
+        compHeading = (compHeading > Math.PI) ? (compHeading - 2.0 * Math.PI) : (compHeading < -Math.PI) ? (compHeading + 2.0 * Math.PI) : compHeading;
+        return (float)compHeading;
     }
 
 }
