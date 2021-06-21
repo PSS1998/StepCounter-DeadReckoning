@@ -87,15 +87,9 @@ public class RoutingService extends Service {
                     float[] orientationAngles = orientation.getOrientationAngles();
                     double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
                     float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
-//                    magneticHeading.add(compHeading);
-//                    float degrees = ExtraFunctions.radsToDegrees(compHeading);
-                    magneticHeading.add(orientationAngles[0]);
-                    float degrees = ExtraFunctions.radsToDegrees(orientationAngles[0]);
+                    magneticHeading.add(compHeading);
+                    float degrees = ExtraFunctions.radsToDegrees(compHeading);
                     rotation = degrees;
-//                    degrees = Filter.moving_average_heading(degrees);
-//
-//                    TextView textView = (TextView) findViewById(R.id.textView);
-//                    textView.setText(String.valueOf(degrees));
 
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
 
