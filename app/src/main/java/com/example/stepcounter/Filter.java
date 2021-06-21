@@ -85,8 +85,11 @@ public class Filter {
 
     // Complementary Filter
     public static float calcComplementaryHeading(float magneticHeading, float gyroscopeHeading) {
-        double gyroHeading = (gyroscopeHeading > Math.PI) ? (gyroscopeHeading - 2.0 * Math.PI) : (gyroscopeHeading < -Math.PI) ? (gyroscopeHeading + 2.0 * Math.PI) : gyroscopeHeading;
-        double compHeading = (0.5*magneticHeading + 0.5*gyroHeading);
+        //convert -pi < h < pi to 0 < h < 2pi
+        double gyroHeading = (gyroscopeHeading < 0) ? (gyroscopeHeading + (2.0 * Math.PI)) : gyroscopeHeading;
+        double magHeading = (magneticHeading < 0) ? (magneticHeading + (2.0 * Math.PI)) : magneticHeading;
+        double compHeading = (0.5*magHeading + 0.5*gyroHeading);
+        //convert 0 < h < 2pi to -pi < h < pi
         compHeading = (compHeading > Math.PI) ? (compHeading - 2.0 * Math.PI) : (compHeading < -Math.PI) ? (compHeading + 2.0 * Math.PI) : compHeading;
         return (float)compHeading;
     }
