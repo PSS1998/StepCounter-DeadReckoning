@@ -229,7 +229,9 @@ public class StepCounterService extends Service {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
                 new IntentFilter(Constants.BROADCAST_DETECTED_ACTIVITY));
 
-        startTracking();
+        if(SettingsActivity.activityRecognitionEnable == 1) {
+            startTracking();
+        }
 
     }
 
