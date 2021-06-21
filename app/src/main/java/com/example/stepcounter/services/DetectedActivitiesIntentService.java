@@ -54,7 +54,7 @@ public class DetectedActivitiesIntentService  extends IntentService {
             if(activity.getType() == DetectedActivity.RUNNING){
                 running_confidence = activity.getConfidence();
             }
-            Log.i(TAG, "Detected activity: " + activity.getType() + ", " + activity.getConfidence());
+//            Log.i(TAG, "Detected activity: " + activity.getType() + ", " + activity.getConfidence());
         }
 
         ArrayList<Integer> activitiesConfidence = new ArrayList<Integer>();;

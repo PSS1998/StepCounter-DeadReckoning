@@ -132,7 +132,7 @@ public class ScatterPlot {
         for (double num : yList)
             if (max < Math.abs(num))
                 max = num;
-        return (Math.abs(max) / 100) * 100 + 100; //rounding up to the nearest hundred
+        return (Math.abs(max) / 10) * 10 + 10; //rounding up to the nearest hundred
 //        return Math.abs(max) + 0.1*Math.abs(max);
     }
 

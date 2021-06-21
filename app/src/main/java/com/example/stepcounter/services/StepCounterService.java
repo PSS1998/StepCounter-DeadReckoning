@@ -122,8 +122,6 @@ public class StepCounterService extends Service {
             StepCounterService.mSeries2 = new LineGraphSeries<>();
         }
 
-        System.out.println(StepCounterService.mSeries1);
-
         setSharedPreferences();
         setTimer();
 
@@ -283,7 +281,6 @@ public class StepCounterService extends Service {
                     }
                     else {
                         if (bufferStep < 6 && bufferStep > 0) {
-                            System.out.println(stepCounts);
                             stepCounts++;
                             editor.putInt(stepDbName, stepCounts);
                         }

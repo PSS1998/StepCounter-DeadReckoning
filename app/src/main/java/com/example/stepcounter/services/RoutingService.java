@@ -68,7 +68,7 @@ public class RoutingService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, 200);
+        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, 70);
     }
 
     @Nullable
@@ -100,10 +100,8 @@ public class RoutingService extends Service {
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
 
                     if(stepCounts - stepCount > 0) {
-                        System.out.println(stepCounts);
                         stepCount = stepCounts;
                         updateRoute(calculatePoint());
-
                     }
                 }
             });
@@ -127,10 +125,8 @@ public class RoutingService extends Service {
         else
             magHeading = magneticHeading.get(magneticHeading.size()-1);
         magneticHeading.clear();
-//        pointX += (float)(ExtraFunctions.calculateDistance(1) * Math.cos(magHeading));
-//        pointY += (float)(ExtraFunctions.calculateDistance(1) * Math.sin(magHeading));
-        pointX += (float)(10 * Math.cos(magHeading));
-        pointY += (float)(10 * Math.sin(magHeading));
+        pointX += (float) (ExtraFunctions.calculateDistance(1) * Math.cos(magHeading));
+        pointY += (float) (ExtraFunctions.calculateDistance(1) * Math.sin(magHeading));
         return new Point(pointX, pointY);
     }
 
