@@ -24,7 +24,7 @@ public class LocalDirection implements SensorEventListener {
     private static float gyroCurrentValue[] = {0, 0, 0};
     private static double gyroTimeStamp = 0;
     private static double timestamp = 0;
-    private final static float TURN_MINIMUM = 1; // degrees
+    private final static float TURN_MINIMUM = (float)0.0174533; // degrees
     private final static int TURN_BACKOFF = BUFFER_LEN; // samples
     private static int backoffTimer = 0;
     private static final double NS2S = 1.0f / 1000000000.0f;
@@ -135,7 +135,8 @@ public class LocalDirection implements SensorEventListener {
             if( backoffTimer <= 0 ){
                 if( Math.abs(bufferSum) > TURN_MINIMUM){
                     float lastTwoTurnRadian = lastEstimatedTurn+estimatedTurn;
-                    if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.4*Math.PI){
+                    System.out.println(lastTwoTurnRadian);
+                    if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.2 * Math.PI){
                         Toast.makeText(contextt, "360 degree turn detected", Toast.LENGTH_LONG).show();
                     }
                     else {
@@ -191,7 +192,7 @@ public class LocalDirection implements SensorEventListener {
             if( backoffTimer <= 0 ){
                 if( Math.abs(bufferSum) > TURN_MINIMUM){
                     float lastTwoTurnRadian = lastEstimatedTurn+estimatedTurn;
-                    if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.4*Math.PI){
+                    if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.2 * Math.PI){
                         Toast.makeText(contextt, "360 degree turn detected", Toast.LENGTH_LONG).show();
                     }
                     else {
