@@ -20,4 +20,12 @@ public final class ExtraFunctions {
         return (float) distance;
     }
 
+    public static int floorMod(int divided, int divisor) {
+        int result = divided % divisor;
+        if (result < 0) {
+            result += divisor;
+        }
+        return result;
+    }
+
 }

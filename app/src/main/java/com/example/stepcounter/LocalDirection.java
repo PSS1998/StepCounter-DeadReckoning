@@ -83,7 +83,7 @@ public class LocalDirection implements SensorEventListener {
 
     public float getBufferMinusSum(){
         float sum = 0;
-        for( int i=buffTail; i!=Math.floorMod((buffHead-1),BUFFER_LEN); i=(i+1)%BUFFER_LEN ){
+        for( int i=buffTail; i!=ExtraFunctions.floorMod((buffHead-1),BUFFER_LEN); i=(i+1)%BUFFER_LEN ){
             sum += gyroBuffer[i]-gyroBuffer[(i+1)%BUFFER_LEN];
         }
         return (float)(sum);
