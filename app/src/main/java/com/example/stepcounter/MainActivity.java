@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        Button startWalking = findViewById(R.id.stratWalking);
+        Button startWalking = findViewById(R.id.startWalking);
         startWalking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ImageView settings = findViewById(R.id.imageView2);
+        ImageView settings = findViewById(R.id.applicationSettings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -176,7 +176,9 @@ public class StepCounterService extends Service {
                         mGraph2LastXValue += 1d;
                         mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
 
-                        peakDetection();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            peakDetection();
+                        }
 
 //                        if(ignore_activity_recognition == 1){
 //                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
@@ -358,7 +360,7 @@ public class StepCounterService extends Service {
     }
 
     public static int calculateCalories(Integer stepCounts) {
-        int m = 70;//kg
+        int m = (int) SettingsActivity.weight;//kg
         int a = 5;//m/s2
         double h = SettingsActivity.height;
         return (int) (stepCounts * ((0.035 * m) + ((a / h) * (0.029 * m))) / 150);

@@ -15,7 +15,20 @@
         android:textColor="#FF000000"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintHorizontal_bias="0.122"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="276dp"
+        android:text="Weight (kg)"
+        android:textColor="#FF000000"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.121"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -45,28 +58,44 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/etRheight"
+        android:id="@+id/Height"
         android:layout_width="324dp"
         android:layout_height="0dp"
         android:drawablePadding="10dp"
-        android:hint="180"
+        android:hint="i.e. 180"
         android:inputType="numberDecimal"
         android:padding="15dp"
         android:textColor="#FF000000"
-        android:textColorHighlight="#FF000000"
-        android:textColorHint="#FF000000"
+        android:textColorHighlight="#92877D7D"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+    <EditText
+        android:id="@+id/Weight"
+        android:layout_width="324dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="84dp"
+        android:drawablePadding="10dp"
+        android:hint="i.e. 60"
+        android:inputType="numberDecimal"
+        android:padding="15dp"
+        android:textColor="#FF000000"
+        android:textColorHighlight="#FF000000"
+        android:textColorHint="#92877D7D"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/recognitionEnSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="136dp"
         android:text="Enable Activity Recognition"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRheight" />
+        app:layout_constraintTop_toBottomOf="@+id/Height" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

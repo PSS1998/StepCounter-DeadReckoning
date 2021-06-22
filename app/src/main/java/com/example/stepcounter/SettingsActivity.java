@@ -14,9 +14,11 @@ import com.example.stepcounter.services.StepCounterService;
 public class SettingsActivity extends AppCompatActivity {
 
     public static float height = 167;
+    public static float weight = 60;
     public static int activityRecognitionEnable = 1;
 
-    private EditText etHeight;
+    private EditText editTextHeight;
+    private EditText editTextWeight;
     private Switch activityRecognitionEnableSwitch;
     private Button stepCounterDebugButton;
     private Button saveButton;
@@ -26,18 +28,25 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        etHeight = (EditText) findViewById(R.id.etRheight);
-        activityRecognitionEnableSwitch = (Switch) findViewById(R.id.switch1);
+        editTextHeight = (EditText) findViewById(R.id.Height);
+        editTextWeight = (EditText) findViewById(R.id.Weight);
+
+        activityRecognitionEnableSwitch = (Switch) findViewById(R.id.recognitionEnSwitch);
         saveButton = (Button) findViewById(R.id.button_save);
         stepCounterDebugButton = (Button) findViewById(R.id.button_step_counter_debug);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String height_text = etHeight.getText().toString().trim();
+                String height_text = editTextHeight.getText().toString().trim();
+                String weight_text = editTextWeight.getText().toString().trim();
 
                 if (!height_text.isEmpty()) {
-                    height = Float.valueOf(height_text);
+                    height = Float.parseFloat(height_text);
+                }
+
+                if (!weight_text.isEmpty()) {
+                    weight = Float.parseFloat(weight_text);
                 }
 
                 if(activityRecognitionEnableSwitch.isChecked()){

@@ -47,6 +47,7 @@ public class StepCounterActivity extends AppCompatActivity {
         caloryText = findViewById(R.id.caloryInfo);
 
         startStepCounter();
+        startRouting();
         setTimer();
         sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
         editor = sharedPreferences.edit();
@@ -99,7 +100,9 @@ public class StepCounterActivity extends AppCompatActivity {
     private void startStepCounter() {
         Intent intent = new Intent(this, StepCounterService.class);
         startService(intent);
+    }
 
+    private void startRouting() {
         routeIntent = new Intent(this, RoutingService.class);
         startService(routeIntent);
     }
