@@ -16,15 +16,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/running" />
 
-    <ImageView
-        android:id="@+id/applicationSettings"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/settings" />
+<!--    <ImageView-->
+<!--        android:id="@+id/applicationSettings"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="1.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/settings" />-->
 
     <Button
         android:id="@+id/startWalking"

@@ -12,7 +12,7 @@
         android:layout_width="258dp"
         android:layout_height="65dp"
         android:layout_marginBottom="44dp"
-        android:text="For the correct operation of the application, please enter your height and weight!"
+        android:text="For the app to function properly, please complete your profile!"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/Height_tutorial"
@@ -67,7 +67,7 @@
         android:inputType="numberDecimal"
         android:padding="15dp"
         android:textColor="#FF000000"
-        android:textColorHighlight="#92877D7D"
+        android:textColorHint="#92877D7D"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -82,12 +82,26 @@
         android:inputType="numberDecimal"
         android:padding="15dp"
         android:textColor="#FF000000"
-        android:textColorHighlight="#FF000000"
         android:textColorHint="#92877D7D"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Switch
+        android:id="@+id/recognitionEnSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
+        android:layout_marginBottom="156dp"
+        android:text="Enable Activity Recognition"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/continueButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Height"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

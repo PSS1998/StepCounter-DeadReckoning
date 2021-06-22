@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.stepcounter.services.StepCounterService;
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String visitedFirstPage = "visitedFirstPage";
     public static final String height = "height";
     public static final String weight = "weight";
+    public static final String activityRecognitionEnabled = "activityRecognitionEnabled";
+
 
     TextView textView;
     Button button;
@@ -72,14 +77,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            ImageView settings = findViewById(R.id.applicationSettings);
-            settings.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                    startActivity(settingsIntent);
-                }
-            });
+//            ImageView settings = findViewById(R.id.applicationSettings);
+//            settings.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+//                    startActivity(settingsIntent);
+//                }
+//            });
         }
 
     }
@@ -115,11 +120,36 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startSettings();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void startSettings() {
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(settingsIntent);
+    }
+
     private void setUserPhysicalInfo() {
         float height_info = 168;
         float weight_info = 60;
+        int activityRecognitionEnable = 0;
         EditText editTextHeight = (EditText) findViewById(R.id.Height_tutorial);
         EditText editTextWeight = (EditText) findViewById(R.id.Weight_tutorial);
+        Switch activityRecognitionEnableSwitch = (Switch) findViewById(R.id.recognitionEnSwitch);
 
         String height_text = editTextHeight.getText().toString().trim();
         String weight_text = editTextWeight.getText().toString().trim();
@@ -131,8 +161,14 @@ public class MainActivity extends AppCompatActivity {
         if (!weight_text.isEmpty()) {
             weight_info = Float.parseFloat(weight_text);
         }
+
+        if(activityRecognitionEnableSwitch.isChecked()){
+            activityRecognitionEnable = 1;
+        }
+
         editor.putFloat(height, height_info);
         editor.putFloat(weight, weight_info);
+        editor.putInt(activityRecognitionEnabled, activityRecognitionEnable);
         editor.putInt(firstTimeOpenedApp, 0);
         editor.apply();
     }

@@ -48,6 +48,7 @@ public class StepCounterService extends Service {
     public static final String stepDbName = "stepCounts";
     public static final String height = "height";
     public static final String weight = "weight";
+    public static final String activityRecognitionEnabled = "activityRecognitionEnabled";
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private int bufferStep = 0;
@@ -100,6 +101,7 @@ public class StepCounterService extends Service {
     private int windowSize = 10;
     private float userWeight = 60;
     private float userHeight = 168;
+    private int activityRecognitionEnable = 0;
 
     private static final int STEP_DELAY_NS = 200000000;
     private long timeNs = 0;
@@ -235,7 +237,7 @@ public class StepCounterService extends Service {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
                 new IntentFilter(Constants.BROADCAST_DETECTED_ACTIVITY));
 
-        if(SettingsActivity.activityRecognitionEnable == 1) {
+        if(activityRecognitionEnable == 1) {
             startTracking();
         }
 
@@ -247,6 +249,7 @@ public class StepCounterService extends Service {
         editor = sharedPreferences.edit();
         userHeight = sharedPreferences.getFloat(height, 168);
         userWeight = sharedPreferences.getFloat(weight, 60);
+        activityRecognitionEnable = sharedPreferences.getInt(activityRecognitionEnabled, 0);
 
     }
 
@@ -403,10 +406,10 @@ public class StepCounterService extends Service {
         double stepThreshold = 0.8d;
         double noiseThreshold = 13d;
 
-        if(SettingsActivity.activityRecognitionEnable == 1){
+        if(activityRecognitionEnable == 1){
             ignore_activity_recognition = 0;
         }
-        if(SettingsActivity.activityRecognitionEnable == 0){
+        if(activityRecognitionEnable == 0){
             ignore_activity_recognition = 1;
         }
 
