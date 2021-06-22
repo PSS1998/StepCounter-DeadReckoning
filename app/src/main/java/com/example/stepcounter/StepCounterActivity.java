@@ -32,6 +32,8 @@ public class StepCounterActivity extends AppCompatActivity {
     private Timer mTimer;
     private SharedPreferences.Editor editor;
     private Intent routeIntent;
+    private float userHeight;
+    private float userWeight;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -51,6 +53,9 @@ public class StepCounterActivity extends AppCompatActivity {
         setTimer();
         sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
         editor = sharedPreferences.edit();
+        userHeight = sharedPreferences.getFloat(StepCounterService.height, 168);
+        userWeight = sharedPreferences.getFloat(StepCounterService.weight, 60);
+
         Button resetButton = findViewById(R.id.reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +130,7 @@ public class StepCounterActivity extends AppCompatActivity {
 
     private void updatestepCounterLayout(int stepCount) {
         try {
-            updateStepCounter(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(StepCounterService.calculateCalories(stepCount)));
+            updateStepCounter(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(StepCounterService.calculateCalories(stepCount, userWeight, userHeight)));
 
         } catch (Exception e) {
             // TODO: 4/22/2021 show error

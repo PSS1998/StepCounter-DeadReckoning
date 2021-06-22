@@ -39,7 +39,7 @@
         <activity
             android:name=".RoutingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="activity_routing"
+            android:label="Route"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat">
         </activity>

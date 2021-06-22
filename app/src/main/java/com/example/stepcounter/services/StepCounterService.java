@@ -46,6 +46,8 @@ import java.util.TimerTask;
 public class StepCounterService extends Service {
     public static final String dbName = "StepCounter";
     public static final String stepDbName = "stepCounts";
+    public static final String height = "height";
+    public static final String weight = "weight";
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private int bufferStep = 0;
@@ -96,6 +98,8 @@ public class StepCounterService extends Service {
     //peak detection variables
     private double lastXPoint = 1d;
     private int windowSize = 10;
+    private float userWeight = 60;
+    private float userHeight = 168;
 
     private static final int STEP_DELAY_NS = 200000000;
     private long timeNs = 0;
@@ -241,6 +245,9 @@ public class StepCounterService extends Service {
     private void setSharedPreferences() {
         sharedPreferences = getApplicationContext().getSharedPreferences(dbName, 0);
         editor = sharedPreferences.edit();
+        userHeight = sharedPreferences.getFloat(height, 168);
+        userWeight = sharedPreferences.getFloat(weight, 60);
+
     }
 
     private void setTimer() {
@@ -255,7 +262,7 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int)ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount)));
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int)ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount, userWeight, userHeight)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -302,7 +309,7 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            updateNotification(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount)));
+            updateNotification(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount, userWeight, userHeight)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }
@@ -359,10 +366,8 @@ public class StepCounterService extends Service {
         }
     }
 
-    public static int calculateCalories(Integer stepCounts) {
-        int m = (int) SettingsActivity.weight;//kg
+    public static int calculateCalories(Integer stepCounts, float m, float h) {
         int a = 5;//m/s2
-        double h = SettingsActivity.height;
         return (int) (stepCounts * ((0.035 * m) + ((a / h) * (0.029 * m))) / 150);
     }
 
