@@ -182,9 +182,7 @@ public class StepCounterService extends Service {
                         mGraph2LastXValue += 1d;
                         mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            peakDetection();
-                        }
+                        peakDetection();
 
 //                        if(ignore_activity_recognition == 1){
 //                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
@@ -400,7 +398,6 @@ public class StepCounterService extends Service {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void peakDetection(){
 
         double stepThreshold = 0.8d;
@@ -458,7 +455,9 @@ public class StepCounterService extends Service {
         double downwardSlope = 0d;
 
         List<DataPoint> dataPointList = new ArrayList<DataPoint>();
-        valuesInWindow.forEachRemaining(dataPointList::add); //This requires API 24 or higher
+        while(valuesInWindow.hasNext()) {
+            dataPointList.add(valuesInWindow.next());
+        }
 
         int foundStep = 0;
 
