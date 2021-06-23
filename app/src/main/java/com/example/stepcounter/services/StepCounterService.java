@@ -13,8 +13,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
@@ -23,7 +21,6 @@ import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.annotation.RequiresApi;
 
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
@@ -32,7 +29,9 @@ import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
 import com.example.stepcounter.RoutingActivity;
-import com.example.stepcounter.SettingsActivity;
+import com.example.stepcounter.sensors.Accelerometer;
+import com.example.stepcounter.sensors.StepCounterAccelerometer;
+import com.example.stepcounter.sensors.StepDetector;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -58,7 +57,6 @@ public class StepCounterService extends Service {
     private SharedPreferences.Editor editor;
 
     private boolean isStepDetectorSensorPresent = false;
-    private float StepNum = 0;
 
     int on_foot = 0;
     int walking = 0;
@@ -76,15 +74,11 @@ public class StepCounterService extends Service {
 
     private static int SMOOTHING_WINDOW_SIZE = 20;
 
-    private float mRawAccelValues[] = new float[3];
-
-    // smoothing accelerometer signal variables
-    private float mAccelValueHistory[][] = new float[3][SMOOTHING_WINDOW_SIZE];
-    private float mRunningAccelTotal[] = new float[3];
-    private float mCurAccelAvg[] = new float[3];
+    private float[] mRawAccelValues;
+    private float[][] mAccelValueHistory = new float[3][SMOOTHING_WINDOW_SIZE];
+    private float[] mRunningAccelTotal = new float[3];
+    private float[] mCurAccelAvg = new float[3];
     private int mCurReadIndex = 0;
-
-    public static float mStepCounter = 0;
 
     private double mGraph1LastXValue = 0d;
     private double mGraph2LastXValue = 0d;
@@ -93,7 +87,6 @@ public class StepCounterService extends Service {
     public static LineGraphSeries<DataPoint> mSeries2;
 
     private double lastMag = 0d;
-    private double avgMag = 0d;
     private double netMag = 0d;
 
     //peak detection variables
@@ -102,6 +95,8 @@ public class StepCounterService extends Service {
     private float userWeight = 60;
     private float userHeight = 168;
     private int activityRecognitionEnable = 0;
+    private Accelerometer accelerometer;
+    private StepDetector stepDetector;
 
     private static final int STEP_DELAY_NS = 200000000;
     private long timeNs = 0;
@@ -132,93 +127,20 @@ public class StepCounterService extends Service {
         setTimer();
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor sensor = null;
         if (sensorManager != null) {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
                 if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null) {
-                    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+                    stepDetector = StepDetector.getInstance(sensorManager);
+                    stepDetector.start();
 //                    isStepDetectorSensorPresent = true;
                 }
             }
             if (!isStepDetectorSensorPresent) {
-                sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                accelerometer = StepCounterAccelerometer.getInstance(sensorManager, this);
+                accelerometer.start();
             }
         }
 
-        SensorEventListener stepDetector = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-                if (sensorEvent != null) {
-                    if (isStepDetectorSensorPresent) {
-                        StepNum++;
-                    }
-                    else {
-                        timeNs = sensorEvent.timestamp;
-                        mRawAccelValues[0] = sensorEvent.values[0];
-                        mRawAccelValues[1] = sensorEvent.values[1];
-                        mRawAccelValues[2] = sensorEvent.values[2];
-
-                        lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
-
-                        for (int i = 0; i < 3; i++) {
-                            mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
-                            mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
-                            mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
-                            mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
-                        }
-                        mCurReadIndex++;
-                        if(mCurReadIndex >= SMOOTHING_WINDOW_SIZE){
-                            mCurReadIndex = 0;
-                        }
-
-                        avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
-
-                        netMag = lastMag - avgMag; //removes gravity effect
-
-                        //update graph data points
-                        mGraph1LastXValue += 1d;
-                        mSeries1.appendData(new DataPoint(mGraph1LastXValue, lastMag), true, 60);
-
-                        mGraph2LastXValue += 1d;
-                        mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
-
-                        peakDetection();
-
-//                        if(ignore_activity_recognition == 1){
-//                            if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
-//                                bufferStep++;
-//                            }
-//                            if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-//                                bufferStep++;
-//                            }
-//                        }
-//                        else {
-//                            if (on_foot == 1) {
-//                                if (walking == 1) {
-//                                    if (InPocketDetector.pocket == 0 && MagnitudeDelta > 0.8 && MagnitudeDelta < 2.5) {
-//                                        bufferStep++;
-//                                    }
-//                                    if (InPocketDetector.pocket == 1 && MagnitudeDelta > 4 && MagnitudeDelta < 13) {
-//                                        bufferStep++;
-//                                    }
-//                                }
-//                                if (running == 1 && MagnitudeDelta > 16 && MagnitudeDelta < 35) {
-//                                    bufferStep++;
-//                                }
-//                            }
-//                        }
-                    }
-                }
-            }
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
-            }
-        };
-        if (sensorManager != null) {
-            sensorManager.registerListener(stepDetector, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            // TODO: 4/22/2021 show error sensor not found
-        }
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -239,6 +161,39 @@ public class StepCounterService extends Service {
             startTracking();
         }
 
+    }
+
+    public void updateOnSensorChanged() {
+
+        timeNs = (long) accelerometer.getTimestamp();
+        mRawAccelValues = accelerometer.getRawAcceleration();
+        lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
+
+        for (int i = 0; i < 3; i++) {
+            mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
+            mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
+            mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
+            mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
+        }
+        mCurReadIndex++;
+        if(mCurReadIndex >= SMOOTHING_WINDOW_SIZE){
+            mCurReadIndex = 0;
+        }
+
+        double avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
+        netMag = lastMag - avgMag; //removes gravity effect
+
+        updateGraphDataPoints();
+
+        peakDetection();
+    }
+
+    private void updateGraphDataPoints() {
+        mGraph1LastXValue += 1d;
+        mSeries1.appendData(new DataPoint(mGraph1LastXValue, lastMag), true, 60);
+
+        mGraph2LastXValue += 1d;
+        mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -287,9 +242,9 @@ public class StepCounterService extends Service {
                 public void run() {
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
                     if (isStepDetectorSensorPresent) {
-                        stepCounts += StepNum;
+                        stepCounts += stepDetector.getNumberOfSteps();
                         editor.putInt(stepDbName, stepCounts);
-                        StepNum = 0;
+                        stepDetector.resetNumberOfSteps();
                     }
                     else {
                         if (bufferStep < 6 && bufferStep > 0) {
@@ -404,7 +359,6 @@ public class StepCounterService extends Service {
 
         if(ignore_activity_recognition == 1){
             if (InPocketDetector.pocket == 0) {
-                stepThreshold = 0.8d;
                 noiseThreshold = 2.5d;
             }
             if (InPocketDetector.pocket == 1) {
@@ -415,7 +369,6 @@ public class StepCounterService extends Service {
         else {
             if (walking == 1) {
                 if (InPocketDetector.pocket == 0) {
-                    stepThreshold = 0.8d;
                     noiseThreshold = 2.5d;
                 }
                 if (InPocketDetector.pocket == 1) {
@@ -439,8 +392,8 @@ public class StepCounterService extends Service {
 
         lastXPoint = highestValX;
 
-        double forwardSlope = 0d;
-        double downwardSlope = 0d;
+        double forwardSlope;
+        double downwardSlope;
 
         List<DataPoint> dataPointList = new ArrayList<DataPoint>();
         while(valuesInWindow.hasNext()) {
@@ -450,8 +403,7 @@ public class StepCounterService extends Service {
         int foundStep = 0;
 
         for(int i = 0; i<dataPointList.size(); i++){
-            if(i == 0) continue;
-            else if(i < dataPointList.size() - 1){
+            if(i < dataPointList.size() - 1){
                 forwardSlope = dataPointList.get(i+1).getY() - dataPointList.get(i).getY();
                 downwardSlope = dataPointList.get(i).getY() - dataPointList.get(i - 1).getY();
 

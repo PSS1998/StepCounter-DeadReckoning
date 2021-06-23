@@ -1,14 +1,14 @@
-package com.example.stepcounter;
+package com.example.stepcounter.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-abstract public class GameSensorListener implements SensorEventListener {
+abstract public class NormalSensorListener implements SensorEventListener {
     protected SensorManager sensorManager;
 
-    public GameSensorListener(SensorManager sensorManager) {
+    public NormalSensorListener(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
     }
 
@@ -19,7 +19,7 @@ abstract public class GameSensorListener implements SensorEventListener {
 
     public void start() {
         Sensor sensor = createSensor();
-        this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
+        this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void stop() {

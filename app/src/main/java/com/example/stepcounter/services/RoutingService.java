@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.Filter;
 import com.example.stepcounter.LocalDirection;
-import com.example.stepcounter.Orientation;
+import com.example.stepcounter.sensors.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
 import java.util.ArrayList;

@@ -4,7 +4,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -32,6 +31,7 @@ public class StepCounterActivity extends AppCompatActivity {
     private Timer mTimer;
     private SharedPreferences.Editor editor;
     private Intent routeIntent;
+    private Intent stepCounterIntent;
     private float userHeight;
     private float userWeight;
 
@@ -103,8 +103,8 @@ public class StepCounterActivity extends AppCompatActivity {
     }
     
     private void startStepCounter() {
-        Intent intent = new Intent(this, StepCounterService.class);
-        startService(intent);
+        stepCounterIntent = new Intent(this, StepCounterService.class);
+        startService(stepCounterIntent);
     }
 
     private void startRouting() {
@@ -141,6 +141,9 @@ public class StepCounterActivity extends AppCompatActivity {
         editor.putInt(StepCounterService.stepDbName, 0);
 //        editor.putString(RoutingService.routePoints, "");
         RoutingService.getScatter().clearPoints();
+
+        stopService(stepCounterIntent);
+        startService(stepCounterIntent);
         stopService(routeIntent);
         startService(routeIntent);
         editor.apply();

@@ -1,21 +1,23 @@
-package com.example.stepcounter;
+package com.example.stepcounter.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Magnetometer extends com.example.stepcounter.GameSensorListener {
+import com.example.stepcounter.Filter;
+
+public class Magnetometer extends NormalSensorListener {
     private float[] magneticField = new float[3];
     private double timestamp;
-    static private com.example.stepcounter.Magnetometer magnetometer;
+    static private Magnetometer magnetometer;
 
     public Magnetometer(SensorManager sensorManager) {
         super(sensorManager);
     }
 
-    public static com.example.stepcounter.Magnetometer getInstance(SensorManager sensorManager) {
+    public static Magnetometer getInstance(SensorManager sensorManager) {
         if (magnetometer == null)
-            magnetometer = new com.example.stepcounter.Magnetometer(sensorManager);
+            magnetometer = new Magnetometer(sensorManager);
         return magnetometer;
     }
 

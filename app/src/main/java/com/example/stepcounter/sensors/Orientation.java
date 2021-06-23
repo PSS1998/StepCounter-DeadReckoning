@@ -1,6 +1,8 @@
-package com.example.stepcounter;
+package com.example.stepcounter.sensors;
 
 import android.hardware.SensorManager;
+
+import com.example.stepcounter.TSAGeoMag;
 
 import java.util.GregorianCalendar;
 
@@ -8,24 +10,24 @@ public class Orientation {
     private float[] orientationAngles = new float[3];
     private float[] rotationMatrix = new float[9];
     private SensorManager sensorManager;
-    private static com.example.stepcounter.Orientation orientation;
+    private static Orientation orientation;
     private Orientation(SensorManager sensorManager){
         this.sensorManager = sensorManager;
-        Accelerometer.getInstance(sensorManager).start();
+        CompassAccelerometer.getInstance(sensorManager).start();
         Magnetometer.getInstance(sensorManager).start();
 
     }
 
-    public static com.example.stepcounter.Orientation getInstance(SensorManager sensorManager) {
+    public static Orientation getInstance(SensorManager sensorManager) {
         if (orientation == null)
-            orientation = new com.example.stepcounter.Orientation(sensorManager);
+            orientation = new Orientation(sensorManager);
         return orientation;
     }
 
     public void updateOrientationAngles() {
 
         SensorManager.getRotationMatrix(rotationMatrix, null,
-                Accelerometer.getInstance(sensorManager).getAcceleration(), Magnetometer.getInstance(sensorManager).getMagnetic_field());
+                CompassAccelerometer.getInstance(sensorManager).getAcceleration(), Magnetometer.getInstance(sensorManager).getMagnetic_field());
         SensorManager.getOrientation(rotationMatrix, orientationAngles);
         orientationAngles[0] += calculateMagneticDeclination();
         orientationAngles[0] = (float)((orientationAngles[0]>Math.PI) ? (orientationAngles[0] - 2*Math.PI) : (orientationAngles[0]<-Math.PI) ? (orientationAngles[0] + 2*Math.PI) : orientationAngles[0]);

@@ -7,6 +7,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
 
+import com.example.stepcounter.sensors.Orientation;
+
 
 public class LocalDirection implements SensorEventListener {
 

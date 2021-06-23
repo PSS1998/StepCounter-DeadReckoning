@@ -1,26 +1,30 @@
-package com.example.stepcounter;
+package com.example.stepcounter.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Accelerometer extends GameSensorListener {
+import com.example.stepcounter.Filter;
+
+public class Accelerometer extends NormalSensorListener {
     private float[] acceleration = new float[3];
+    private float[] rawAcceleration = new float[3];
     private double timestamp;
-    static private Accelerometer accelerometer;
 
-    private Accelerometer(SensorManager sensorManager) {
+    public Accelerometer(SensorManager sensorManager) {
         super(sensorManager);
-    }
-
-    public static Accelerometer getInstance(SensorManager sensorManager) {
-        if (accelerometer == null)
-            accelerometer = new Accelerometer(sensorManager);
-        return accelerometer;
     }
 
     public Sensor createSensor() {
         return super.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    public float[] getRawAcceleration() {
+        return rawAcceleration;
+    }
+
+    public double getTimestamp() {
+        return timestamp;
     }
 
     public float[] getAcceleration() {
@@ -33,9 +37,9 @@ public class Accelerometer extends GameSensorListener {
             if (timestamp == 0)
                 timestamp = event.timestamp;
             acceleration = Filter.LPF(event.values.clone(), acceleration);
-//            acceleration = Filter.LPF(acceleration, event.values.clone());
-//            System.arraycopy(event.values, 0, acceleration, 0, acceleration.length);
+            rawAcceleration = acceleration;
             timestamp = event.timestamp;
+//            StepCounterService.
         }
     }
 }

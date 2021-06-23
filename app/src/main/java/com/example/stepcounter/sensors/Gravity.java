@@ -1,11 +1,11 @@
-package com.example.stepcounter;
+package com.example.stepcounter.sensors;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Gravity extends com.example.stepcounter.GameSensorListener {
-    static private com.example.stepcounter.Gravity gravity;
+public class Gravity extends NormalSensorListener {
+    static private Gravity gravity;
     private double gradient = 0;
     private double timestamp;
     public static float NS2US = 1.0f / 1000.0f;
@@ -15,9 +15,9 @@ public class Gravity extends com.example.stepcounter.GameSensorListener {
     private Gravity(SensorManager sensorManager) {
         super(sensorManager);
     }
-    public static com.example.stepcounter.Gravity getInstance(SensorManager sensorManager) {
+    public static Gravity getInstance(SensorManager sensorManager) {
         if (gravity == null)
-            gravity = new com.example.stepcounter.Gravity(sensorManager);
+            gravity = new Gravity(sensorManager);
         return gravity;
     }
 
