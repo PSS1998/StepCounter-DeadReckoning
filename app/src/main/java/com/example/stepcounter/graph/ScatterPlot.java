@@ -2,6 +2,7 @@ package com.example.stepcounter.graph;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -76,7 +77,7 @@ public class ScatterPlot {
         myMultiRenderer.addSeriesRenderer(myRenderer);
 
         //setting text graph element sizes
-        myMultiRenderer.setPointSize(10); //size of scatter plot points
+        myMultiRenderer.setPointSize(5); //size of scatter plot points
         myMultiRenderer.setShowLegend(false); //hide legend
 
         //set chart and label sizes
@@ -90,12 +91,16 @@ public class ScatterPlot {
         myMultiRenderer.setYLabelsPadding(50);
         myMultiRenderer.setXLabelsPadding(10);
 
+        //finding height to width ratio of screen to keep the plot's scale correct
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        float ratio = (((float)metrics.heightPixels-125) / ((float)metrics.widthPixels-200));
+
         //setting chart min/max
         double bound = getMaxBound();
         myMultiRenderer.setXAxisMin(-bound);
         myMultiRenderer.setXAxisMax(bound);
-        myMultiRenderer.setYAxisMin(-bound);
-        myMultiRenderer.setYAxisMax(bound);
+        myMultiRenderer.setYAxisMin(-bound*ratio);
+        myMultiRenderer.setYAxisMax(bound*ratio);
 
         //returns the graphical view containing the graphz
         return ChartFactory.getScatterChartView(context, myMultiSeries, myMultiRenderer);

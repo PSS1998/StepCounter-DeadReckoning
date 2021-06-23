@@ -135,7 +135,6 @@ public class LocalDirection implements SensorEventListener {
             if( backoffTimer <= 0 ){
                 if( Math.abs(bufferSum) > TURN_MINIMUM){
                     float lastTwoTurnRadian = lastEstimatedTurn+estimatedTurn;
-                    System.out.println(lastTwoTurnRadian);
                     if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.2 * Math.PI){
                         Toast.makeText(contextt, "360 degree turn detected", Toast.LENGTH_LONG).show();
                     }
