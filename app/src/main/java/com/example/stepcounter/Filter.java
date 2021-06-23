@@ -9,7 +9,7 @@ public class Filter {
     private static ArrayList<Float> moving_heading;
     private static final float moving_average_size=12;//change
 
-    private static final float ALPHA = 1/16F;//adjust sensitivity
+    private static final float ALPHA = (float)((float)1/(float)Constants.LPF_ALPHA);
 
 
     public static float moving_average_heading(float heading){
@@ -92,6 +92,34 @@ public class Filter {
         //convert 0 < h < 2pi to -pi < h < pi
         compHeading = (compHeading > Math.PI) ? (compHeading - 2.0 * Math.PI) : (compHeading < -Math.PI) ? (compHeading + 2.0 * Math.PI) : compHeading;
         return (float)compHeading;
+    }
+
+    // Median Filter
+    public static class medianFilter {
+
+        private ArrayList<Float> valueList;
+
+        public medianFilter(){
+            valueList = new ArrayList<Float>();
+        }
+
+        public void addValue(float value){
+            valueList.add(value);
+        }
+
+        public float get(){
+            float magHeading = 0;
+            if(valueList.size() > (int)(1000/Constants.ORIENTATION_PERIOD))
+                magHeading = valueList.get(valueList.size()-4);
+            else
+                magHeading = valueList.get(valueList.size()/2);
+            return magHeading;
+        }
+
+        public void clear(){
+            valueList.clear();
+        }
+
     }
 
 }

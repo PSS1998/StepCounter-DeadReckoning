@@ -37,11 +37,8 @@ public class DetectedActivitiesIntentService  extends IntentService {
         // 0 and 100.
         ArrayList<DetectedActivity> detectedActivities = (ArrayList) result.getProbableActivities();
 
-        int on_foot = 0;
         int on_foot_confidence = 0;
-        int walking = 0;
         int walking_confidence = 0;
-        int running = 0;
         int running_confidence = 0;
 
         for (DetectedActivity activity : detectedActivities) {

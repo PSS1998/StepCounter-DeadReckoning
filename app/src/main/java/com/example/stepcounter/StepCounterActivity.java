@@ -53,8 +53,8 @@ public class StepCounterActivity extends AppCompatActivity {
         setTimer();
         sharedPreferences = getApplicationContext().getSharedPreferences(StepCounterService.dbName, 0);
         editor = sharedPreferences.edit();
-        userHeight = sharedPreferences.getFloat(StepCounterService.height, 168);
-        userWeight = sharedPreferences.getFloat(StepCounterService.weight, 60);
+        userHeight = sharedPreferences.getFloat(StepCounterService.height, Constants.DEFAULT_HEIGHT);
+        userWeight = sharedPreferences.getFloat(StepCounterService.weight, Constants.DEFAULT_WEIGHT);
 
         Button resetButton = findViewById(R.id.reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +87,7 @@ public class StepCounterActivity extends AppCompatActivity {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new updateInfoTimer(), 0, 1000);
+        mTimer.scheduleAtFixedRate(new updateInfoTimer(), 0, Constants.UI_UPDATE_PERIOD);
     }
 
     class updateInfoTimer extends TimerTask {

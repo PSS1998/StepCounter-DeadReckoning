@@ -29,9 +29,6 @@ import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
 import com.example.stepcounter.RoutingActivity;
-import com.example.stepcounter.sensors.Accelerometer;
-import com.example.stepcounter.sensors.StepCounterAccelerometer;
-import com.example.stepcounter.sensors.StepDetector;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -57,6 +54,7 @@ public class StepCounterService extends Service {
     private SharedPreferences.Editor editor;
 
     private boolean isStepDetectorSensorPresent = false;
+    private float StepNum = 0;
 
     int on_foot = 0;
     int walking = 0;
@@ -74,10 +72,10 @@ public class StepCounterService extends Service {
 
     private static int SMOOTHING_WINDOW_SIZE = 20;
 
-    private float[] mRawAccelValues;
-    private float[][] mAccelValueHistory = new float[3][SMOOTHING_WINDOW_SIZE];
-    private float[] mRunningAccelTotal = new float[3];
-    private float[] mCurAccelAvg = new float[3];
+    private float mRawAccelValues[] = new float[3];
+    private float mAccelValueHistory[][] = new float[3][SMOOTHING_WINDOW_SIZE];
+    private float mRunningAccelTotal[] = new float[3];
+    private float mCurAccelAvg[] = new float[3];
     private int mCurReadIndex = 0;
 
     private double mGraph1LastXValue = 0d;
@@ -87,18 +85,19 @@ public class StepCounterService extends Service {
     public static LineGraphSeries<DataPoint> mSeries2;
 
     private double lastMag = 0d;
+    private double avgMag = 0d;
     private double netMag = 0d;
 
     //peak detection variables
     private double lastXPoint = 1d;
     private int windowSize = 10;
-    private float userWeight = 60;
-    private float userHeight = 168;
+    private float userWeight = Constants.DEFAULT_WEIGHT;
+    private float userHeight = Constants.DEFAULT_HEIGHT;
     private int activityRecognitionEnable = 0;
     private Accelerometer accelerometer;
     private StepDetector stepDetector;
 
-    private static final int STEP_DELAY_NS = 200000000;
+    private static final int STEP_DELAY_NS = Constants.STEP_COUNTER_PERIOD*1000000;
     private long timeNs = 0;
     private long lastStepTimeNs = 0;
 
@@ -106,7 +105,6 @@ public class StepCounterService extends Service {
     Context context = this;
 
     LocalDirection localDirection;
-
 
     @Override
     public void onCreate() {
@@ -196,14 +194,30 @@ public class StepCounterService extends Service {
         mSeries2.appendData(new DataPoint(mGraph2LastXValue, netMag), true, 60);
     }
 
+    private void removeGravityFromAcceleration() {
+        for (int i = 0; i < 3; i++) {
+            mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
+            mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
+            mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
+            mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
+        }
+        mCurReadIndex++;
+        if(mCurReadIndex >= SMOOTHING_WINDOW_SIZE){
+            mCurReadIndex = 0;
+        }
+
+        avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
+
+        netMag = lastMag - avgMag; //removes gravity effect
+    }
+
     @SuppressLint("CommitPrefEdits")
     private void setSharedPreferences() {
         sharedPreferences = getApplicationContext().getSharedPreferences(dbName, 0);
         editor = sharedPreferences.edit();
-        userHeight = sharedPreferences.getFloat(height, 168);
-        userWeight = sharedPreferences.getFloat(weight, 60);
+        userHeight = sharedPreferences.getFloat(height, Constants.DEFAULT_HEIGHT);
+        userWeight = sharedPreferences.getFloat(weight, Constants.DEFAULT_WEIGHT);
         activityRecognitionEnable = sharedPreferences.getInt(activityRecognitionEnabled, 0);
-
     }
 
     private void setTimer() {
@@ -212,7 +226,7 @@ public class StepCounterService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 200);
+        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, Constants.STEP_COUNTER_PERIOD);
     }
 
     @Override
@@ -340,47 +354,12 @@ public class StepCounterService extends Service {
         stopService(intent);
     }
 
-
     private void peakDetection(){
 
-        double stepThreshold = 0.8d;
-        double noiseThreshold = 13d;
+        double[] stepThresholds = calculateStepThresholds();
 
-        if(activityRecognitionEnable == 1){
-            ignore_activity_recognition = 0;
-        }
-        if(activityRecognitionEnable == 0){
-            ignore_activity_recognition = 1;
-        }
-
-        if(on_foot == 0 && RoutingActivity.inRounting == 1 && ignore_activity_recognition == 0){
-            ignore_activity_recognition = 1;
-        }
-
-        if(ignore_activity_recognition == 1){
-            if (InPocketDetector.pocket == 0) {
-                noiseThreshold = 2.5d;
-            }
-            if (InPocketDetector.pocket == 1) {
-                stepThreshold = 4d;
-                noiseThreshold = 13d;
-            }
-        }
-        else {
-            if (walking == 1) {
-                if (InPocketDetector.pocket == 0) {
-                    noiseThreshold = 2.5d;
-                }
-                if (InPocketDetector.pocket == 1) {
-                    stepThreshold = 4d;
-                    noiseThreshold = 13d;
-                }
-            }
-            if (running == 1) {
-                stepThreshold = 16d;
-                noiseThreshold = 35d;
-            }
-        }
+        double stepThreshold = stepThresholds[0];
+        double noiseThreshold = stepThresholds[1];
 
         double highestValX = mSeries2.getHighestValueX();
 
@@ -424,6 +403,62 @@ public class StepCounterService extends Service {
                 }
             }
         }
+    }
+
+    private double[] calculateStepThresholds() {
+        double stepThresholds[] = new double[2];
+        stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
+        stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+
+        if(activityRecognitionEnable == 1){
+            ignore_activity_recognition = 0;
+        }
+        if(activityRecognitionEnable == 0){
+            ignore_activity_recognition = 1;
+        }
+
+        // disable activity recognition while in routing activity
+        if(on_foot == 0 && RoutingActivity.inRouting == 1 && ignore_activity_recognition == 0){
+            ignore_activity_recognition = 1;
+        }
+
+        if(ignore_activity_recognition == 1){
+            if (InPocketDetector.pocket == 0) {
+                stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
+                stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INHAND;
+            }
+            if (InPocketDetector.pocket == 1) {
+                stepThresholds[0] = Constants.STEP_THRESHOLD_INPOCKET;
+                stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+            }
+            // InPocketDetector sensors not availible
+            if (InPocketDetector.pocket == -1) {
+                stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
+                stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+            }
+        }
+        else {
+            if (walking == 1) {
+                if (InPocketDetector.pocket == 0) {
+                    stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
+                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INHAND;
+                }
+                if (InPocketDetector.pocket == 1) {
+                    stepThresholds[0] = Constants.STEP_THRESHOLD_INPOCKET;
+                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+                }
+                // InPocketDetector sensors not availible
+                if (InPocketDetector.pocket == -1) {
+                    stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
+                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+                }
+            }
+            if (running == 1) {
+                stepThresholds[0] = Constants.STEP_THRESHOLD_RUNNING;
+                stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_RUNNING;
+            }
+        }
+        return stepThresholds;
     }
 
 }

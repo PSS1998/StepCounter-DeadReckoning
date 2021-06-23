@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 
+import com.example.stepcounter.Constants;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
@@ -77,7 +79,7 @@ public class ScatterPlot {
         myMultiRenderer.addSeriesRenderer(myRenderer);
 
         //setting text graph element sizes
-        myMultiRenderer.setPointSize(5); //size of scatter plot points
+        myMultiRenderer.setPointSize(Constants.PLOT_POINTS_SIZE); //size of scatter plot points
         myMultiRenderer.setShowLegend(false); //hide legend
 
         //set chart and label sizes
