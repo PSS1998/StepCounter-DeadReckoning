@@ -94,4 +94,32 @@ public class Filter {
         return (float)compHeading;
     }
 
+    // Median Filter
+    public static class medianFilter {
+
+        private ArrayList<Float> valueList;
+
+        public medianFilter(){
+            valueList = new ArrayList<Float>();
+        }
+
+        public void addValue(float value){
+            valueList.add(value);
+        }
+
+        public float get(){
+            float magHeading = 0;
+            if(valueList.size() > (int)(1000/70))
+                magHeading = valueList.get(valueList.size()-4);
+            else
+                magHeading = valueList.get(valueList.size()/2);
+            return magHeading;
+        }
+
+        public void clear(){
+            valueList.clear();
+        }
+
+    }
+
 }

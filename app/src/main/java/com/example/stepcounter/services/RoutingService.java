@@ -31,7 +31,7 @@ public class RoutingService extends Service {
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
 
-//    private static int stepFlag = 0;
+    //    private static int stepFlag = 0;
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private static float rotation = 0;
@@ -42,7 +42,7 @@ public class RoutingService extends Service {
 
     private float userHeight;
 
-    ArrayList<Float> magneticHeading = new ArrayList<Float>();
+    Filter.medianFilter magneticHeading;
 
     private static ScatterPlot scatterPlot;
 
@@ -52,6 +52,7 @@ public class RoutingService extends Service {
         setSharedPreferences();
         userHeight = sharedPreferences.getFloat(StepCounterService.height, 168);
         stepCount = 0;
+        magneticHeading = new Filter.medianFilter();
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         orientation = Orientation.getInstance(sensorManager);
         scatterPlot = ScatterPlot.getInstance();
@@ -90,7 +91,7 @@ public class RoutingService extends Service {
                     float[] orientationAngles = orientation.getOrientationAngles();
                     double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
                     float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
-                    magneticHeading.add(compHeading);
+                    magneticHeading.addValue(compHeading);
                     float degrees = ExtraFunctions.radsToDegrees(compHeading);
                     rotation = degrees;
 
@@ -117,10 +118,7 @@ public class RoutingService extends Service {
         float pointX = scatterPlot.getLastYPoint();
         float pointY = scatterPlot.getLastXPoint();
         float magHeading = 0;
-        if(magneticHeading.size() > 3)
-            magHeading = magneticHeading.get(magneticHeading.size()-4);
-        else
-            magHeading = magneticHeading.get(magneticHeading.size()-1);
+        magHeading = magneticHeading.get();
         magneticHeading.clear();
         pointX += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.cos(magHeading));
         pointY += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.sin(magHeading));
