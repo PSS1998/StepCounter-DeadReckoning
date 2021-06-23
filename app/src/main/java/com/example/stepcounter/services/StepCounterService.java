@@ -131,13 +131,13 @@ public class StepCounterService extends Service {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
                 if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null) {
                     stepDetector = StepDetector.getInstance(sensorManager);
-                    stepDetector.start();
+                    stepDetector.start(SensorManager.SENSOR_DELAY_NORMAL);
 //                    isStepDetectorSensorPresent = true;
                 }
             }
             if (!isStepDetectorSensorPresent) {
                 accelerometer = StepCounterAccelerometer.getInstance(sensorManager, this);
-                accelerometer.start();
+                accelerometer.start(SensorManager.SENSOR_DELAY_NORMAL);
             }
         }
 

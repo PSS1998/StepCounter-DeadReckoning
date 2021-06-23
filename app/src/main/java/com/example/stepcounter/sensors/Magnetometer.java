@@ -6,7 +6,7 @@ import android.hardware.SensorManager;
 
 import com.example.stepcounter.Filter;
 
-public class Magnetometer extends NormalSensorListener {
+public class Magnetometer extends SensorListener {
     private float[] magneticField = new float[3];
     private double timestamp;
     static private Magnetometer magnetometer;

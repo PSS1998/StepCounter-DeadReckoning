@@ -4,9 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-import com.example.stepcounter.Filter;
-
-public class StepDetector extends NormalSensorListener {
+public class StepDetector extends SensorListener {
     private double timestamp;
     static private StepDetector stepDetector;
     private int NumberOfSteps = 0;

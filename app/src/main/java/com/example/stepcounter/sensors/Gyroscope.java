@@ -4,7 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Gyroscope extends NormalSensorListener {
+public class Gyroscope extends SensorListener {
     private double velocityZ;
     private double gradient = 0;
     private double timestamp;

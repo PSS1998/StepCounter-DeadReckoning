@@ -13,8 +13,8 @@ public class Orientation {
     private static Orientation orientation;
     private Orientation(SensorManager sensorManager){
         this.sensorManager = sensorManager;
-        CompassAccelerometer.getInstance(sensorManager).start();
-        Magnetometer.getInstance(sensorManager).start();
+        CompassAccelerometer.getInstance(sensorManager).start(SensorManager.SENSOR_DELAY_GAME);
+        Magnetometer.getInstance(sensorManager).start(SensorManager.SENSOR_DELAY_GAME);
 
     }
 

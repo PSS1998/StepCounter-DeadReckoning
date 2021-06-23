@@ -4,7 +4,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-public class Gravity extends NormalSensorListener {
+public class Gravity extends SensorListener {
     static private Gravity gravity;
     private double gradient = 0;
     private double timestamp;

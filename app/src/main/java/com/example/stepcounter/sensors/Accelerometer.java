@@ -6,7 +6,7 @@ import android.hardware.SensorManager;
 
 import com.example.stepcounter.Filter;
 
-public class Accelerometer extends NormalSensorListener {
+public class Accelerometer extends SensorListener {
     private float[] acceleration = new float[3];
     private float[] rawAcceleration = new float[3];
     private double timestamp;

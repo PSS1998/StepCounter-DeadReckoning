@@ -5,10 +5,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-abstract public class NormalSensorListener implements SensorEventListener {
+abstract public class SensorListener implements SensorEventListener {
     protected SensorManager sensorManager;
 
-    public NormalSensorListener(SensorManager sensorManager) {
+    public SensorListener(SensorManager sensorManager) {
         this.sensorManager = sensorManager;
     }
 
@@ -17,9 +17,9 @@ abstract public class NormalSensorListener implements SensorEventListener {
     @Override
     abstract public void onSensorChanged(SensorEvent event);
 
-    public void start() {
+    public void start(int sensorDelay) {
         Sensor sensor = createSensor();
-        this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(this, sensor, sensorDelay);
     }
 
     public void stop() {
