@@ -95,6 +95,9 @@ public class RoutingService extends Service {
                     orientation.updateOrientationAngles();
                     float[] orientationAngles = orientation.getOrientationAngles();
                     double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
+                    if(gyroHeading == -10){
+                        gyroHeading = orientationAngles[0];
+                    }
                     float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
                     magneticHeading.addValue(compHeading);
                     float degrees = ExtraFunctions.radsToDegrees(compHeading);

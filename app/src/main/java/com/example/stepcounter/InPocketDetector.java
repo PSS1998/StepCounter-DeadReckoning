@@ -31,28 +31,22 @@ public class InPocketDetector implements SensorEventListener {
         mySensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
         accSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
         proximitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-
         lightSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
-        if (accSensor == null){
-        }else{
+        if (accSensor != null){
             mySensorManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
-        if (proximitySensor == null){
-        }else{
+        if (proximitySensor != null){
             mySensorManager.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
         if(lightSensor != null){
             mySensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-        } else {
         }
 
-
+        if((accSensor == null) || (proximitySensor == null) || (lightSensor == null)){
+            pocket = -1;
+        }
 
     }
 

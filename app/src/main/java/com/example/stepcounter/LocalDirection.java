@@ -14,6 +14,8 @@ public class LocalDirection implements SensorEventListener {
     Sensor gyroscopeSensor;
     Sensor rotationSensor;
 
+    private static int gyroNotAvailible = 0;
+
     private final static int BUFFER_LEN = 64;
     // Ring Buffer
     private static float gyroBuffer[] = new float[BUFFER_LEN];
@@ -46,6 +48,7 @@ public class LocalDirection implements SensorEventListener {
         if (rotationSensor == null){
             gyroscopeSensor = mySensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
             if (gyroscopeSensor == null){
+                gyroNotAvailible = 1;
             }else{
                 mySensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_GAME);
             }
@@ -218,7 +221,12 @@ public class LocalDirection implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int i) { }
 
     public static float getOrientationBasedOnGyroscope(){
-        return currentHeading;
+        if(gyroNotAvailible == 0) {
+            return currentHeading;
+        }
+        else{
+            return -10;
+        }
     }
 
 }

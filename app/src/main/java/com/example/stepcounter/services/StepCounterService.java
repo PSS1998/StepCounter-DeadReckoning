@@ -411,6 +411,10 @@ public class StepCounterService extends Service {
                 stepThreshold = Constants.STEP_THRESHOLD_INPOCKET;
                 noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
             }
+            if (InPocketDetector.pocket == -1) {
+                stepThreshold = Constants.STEP_THRESHOLD_INHAND;
+                noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+            }
         }
         else {
             if (walking == 1) {
@@ -420,6 +424,10 @@ public class StepCounterService extends Service {
                 }
                 if (InPocketDetector.pocket == 1) {
                     stepThreshold = Constants.STEP_THRESHOLD_INPOCKET;
+                    noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
+                }
+                if (InPocketDetector.pocket == -1) {
+                    stepThreshold = Constants.STEP_THRESHOLD_INHAND;
                     noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
                 }
             }
