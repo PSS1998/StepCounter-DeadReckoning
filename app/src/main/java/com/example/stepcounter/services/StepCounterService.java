@@ -52,6 +52,8 @@ public class StepCounterService extends Service {
     private Timer mTimer;
     private int bufferStep = 0;
 
+    private int gyroDriftCounter = 100;
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -258,6 +260,12 @@ public class StepCounterService extends Service {
                     updateNotification(stepCounts);
 
                     editor.apply();
+
+                    gyroDriftCounter--;
+                    if(gyroDriftCounter == 0){
+                        gyroDriftCounter = 100;
+                        localDirection = new LocalDirection(context);
+                    }
                 }
             });
         }

@@ -20,11 +20,11 @@ public class LocalDirection implements SensorEventListener {
 
     private final static int BUFFER_LEN = 64;
     // Ring Buffer
-    private static float gyroBuffer[] = new float[BUFFER_LEN];
-    private static double gyroBufferTimeStamp[] = new double[BUFFER_LEN];
-    private static int buffHead = 0;
-    private static int buffTail = 0;
-    private static int buffNumVals = 0;
+    private float gyroBuffer[] = new float[BUFFER_LEN];
+    private double gyroBufferTimeStamp[] = new double[BUFFER_LEN];
+    private int buffHead = 0;
+    private int buffTail = 0;
+    private int buffNumVals = 0;
     private static float gyroCurrentValue[] = {0, 0, 0};
     private static double gyroTimeStamp = 0;
     private static double timestamp = 0;
@@ -32,11 +32,11 @@ public class LocalDirection implements SensorEventListener {
     private final static int TURN_BACKOFF = BUFFER_LEN; // samples
     private static int backoffTimer = 0;
     private static final double NS2S = 1.0f / 1000000000.0f;
-    private static float estimatedTurn = 0;
-    private static float lastEstimatedTurn = 0;
-    private static float initialHeading;
-    private static float initialHeadingBias = 0;
-    private static float currentHeading;
+    private float estimatedTurn = 0;
+    private float lastEstimatedTurn = 0;
+    private float initialHeading = 0;
+    private float initialHeadingBias = 0;
+    private static float currentHeading = 0;
     private static Context contextt;
     Orientation orientation;
     int initialHeadingSet = 0;
