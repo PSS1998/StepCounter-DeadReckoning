@@ -99,11 +99,11 @@ public class StepCounterService extends Service {
     //peak detection variables
     private double lastXPoint = 1d;
     private int windowSize = 10;
-    private float userWeight = 60;
-    private float userHeight = 168;
+    private float userWeight = Constants.DEFAULT_WEIGHT;
+    private float userHeight = Constants.DEFAULT_HEIGHT;
     private int activityRecognitionEnable = 0;
 
-    private static final int STEP_DELAY_NS = 200000000;
+    private static final int STEP_DELAY_NS = Constants.STEP_COUNTER_PERIOD*1000000;
     private long timeNs = 0;
     private long lastStepTimeNs = 0;
 
@@ -245,8 +245,8 @@ public class StepCounterService extends Service {
     private void setSharedPreferences() {
         sharedPreferences = getApplicationContext().getSharedPreferences(dbName, 0);
         editor = sharedPreferences.edit();
-        userHeight = sharedPreferences.getFloat(height, 168);
-        userWeight = sharedPreferences.getFloat(weight, 60);
+        userHeight = sharedPreferences.getFloat(height, Constants.DEFAULT_HEIGHT);
+        userWeight = sharedPreferences.getFloat(weight, Constants.DEFAULT_WEIGHT);
         activityRecognitionEnable = sharedPreferences.getInt(activityRecognitionEnabled, 0);
 
     }
@@ -257,7 +257,7 @@ public class StepCounterService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, 200);
+        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, Constants.STEP_COUNTER_PERIOD);
     }
 
     @Override
@@ -388,8 +388,8 @@ public class StepCounterService extends Service {
 
     private void peakDetection(){
 
-        double stepThreshold = 0.8d;
-        double noiseThreshold = 13d;
+        double stepThreshold = Constants.STEP_THRESHOLD_INHAND;
+        double noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
 
         if(activityRecognitionEnable == 1){
             ignore_activity_recognition = 0;
@@ -404,28 +404,28 @@ public class StepCounterService extends Service {
 
         if(ignore_activity_recognition == 1){
             if (InPocketDetector.pocket == 0) {
-                stepThreshold = 0.8d;
-                noiseThreshold = 2.5d;
+                stepThreshold = Constants.STEP_THRESHOLD_INHAND;
+                noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INHAND;
             }
             if (InPocketDetector.pocket == 1) {
-                stepThreshold = 4d;
-                noiseThreshold = 13d;
+                stepThreshold = Constants.STEP_THRESHOLD_INPOCKET;
+                noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
             }
         }
         else {
             if (walking == 1) {
                 if (InPocketDetector.pocket == 0) {
-                    stepThreshold = 0.8d;
-                    noiseThreshold = 2.5d;
+                    stepThreshold = Constants.STEP_THRESHOLD_INHAND;
+                    noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INHAND;
                 }
                 if (InPocketDetector.pocket == 1) {
-                    stepThreshold = 4d;
-                    noiseThreshold = 13d;
+                    stepThreshold = Constants.STEP_THRESHOLD_INPOCKET;
+                    noiseThreshold = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
                 }
             }
             if (running == 1) {
-                stepThreshold = 16d;
-                noiseThreshold = 35d;
+                stepThreshold = Constants.STEP_THRESHOLD_RUNNING;
+                noiseThreshold = Constants.STEP_NOISE_THRESHOLD_RUNNING;
             }
         }
 

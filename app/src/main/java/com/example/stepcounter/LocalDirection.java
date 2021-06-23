@@ -37,7 +37,7 @@ public class LocalDirection implements SensorEventListener {
     Orientation orientation;
     int initialHeadingSet = 0;
     private static float mRotationMatrix[] = new float[16];
-    int counterCompass = 16;
+    int counterCompass = Constants.LPF_ALPHA;
 
     public LocalDirection(Context context){
         mySensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);

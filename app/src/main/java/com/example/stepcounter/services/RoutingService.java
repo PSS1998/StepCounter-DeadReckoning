@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 
+import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.Filter;
 import com.example.stepcounter.LocalDirection;
@@ -50,7 +51,7 @@ public class RoutingService extends Service {
     public void onCreate() {
         super.onCreate();
         setSharedPreferences();
-        userHeight = sharedPreferences.getFloat(StepCounterService.height, 168);
+        userHeight = sharedPreferences.getFloat(StepCounterService.height, Constants.DEFAULT_HEIGHT);
         stepCount = 0;
         magneticHeading = new Filter.medianFilter();
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -72,7 +73,7 @@ public class RoutingService extends Service {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, 70);
+        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, Constants.ORIENTATION_PERIOD);
     }
 
     @Nullable

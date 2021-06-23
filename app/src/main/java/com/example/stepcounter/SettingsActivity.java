@@ -13,8 +13,8 @@ import com.example.stepcounter.services.StepCounterService;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    public static float height = 167;
-    public static float weight = 60;
+    public static float height = Constants.DEFAULT_HEIGHT;
+    public static float weight = Constants.DEFAULT_WEIGHT;
     public static int activityRecognitionEnable = 1;
 
     private EditText editTextHeight;

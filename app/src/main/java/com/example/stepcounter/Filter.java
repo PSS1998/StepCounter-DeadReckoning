@@ -9,7 +9,7 @@ public class Filter {
     private static ArrayList<Float> moving_heading;
     private static final float moving_average_size=12;//change
 
-    private static final float ALPHA = 1/16F;//adjust sensitivity
+    private static final float ALPHA = (float)((float)1/(float)Constants.LPF_ALPHA);
 
 
     public static float moving_average_heading(float heading){
@@ -109,7 +109,7 @@ public class Filter {
 
         public float get(){
             float magHeading = 0;
-            if(valueList.size() > (int)(1000/70))
+            if(valueList.size() > (int)(1000/Constants.ORIENTATION_PERIOD))
                 magHeading = valueList.get(valueList.size()-4);
             else
                 magHeading = valueList.get(valueList.size()/2);

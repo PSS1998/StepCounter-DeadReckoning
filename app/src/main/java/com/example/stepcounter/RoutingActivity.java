@@ -73,7 +73,7 @@ public class RoutingActivity extends AppCompatActivity {
         else
             mTimer = new Timer();
 
-        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, 1000);
+        mTimer.scheduleAtFixedRate(new UpdateGraph(), 0, Constants.UI_UPDATE_PERIOD);
     }
 
     class UpdateGraph extends TimerTask {

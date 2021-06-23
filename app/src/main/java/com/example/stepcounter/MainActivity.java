@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUserPhysicalInfo() {
-        float height_info = 168;
-        float weight_info = 60;
+        float height_info = Constants.DEFAULT_HEIGHT;
+        float weight_info = Constants.DEFAULT_WEIGHT;
         int activityRecognitionEnable = 0;
         EditText editTextHeight = (EditText) findViewById(R.id.Height_tutorial);
         EditText editTextWeight = (EditText) findViewById(R.id.Weight_tutorial);
