@@ -23,7 +23,7 @@ public class RoutingActivity extends AppCompatActivity {
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
 
-    public static int inRounting = 0;
+    public static int inRouting = 0;
 
     private Handler mHandler = new Handler();
     private Timer mTimer;
@@ -37,7 +37,7 @@ public class RoutingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routing);
 
-        inRounting = 1;
+        inRouting = 1;
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -58,7 +58,7 @@ public class RoutingActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        inRounting = 0;
+        inRouting = 0;
     }
 
     @SuppressLint("CommitPrefEdits")
