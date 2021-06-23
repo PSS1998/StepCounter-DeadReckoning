@@ -137,10 +137,12 @@ public class LocalDirection implements SensorEventListener {
                     float lastTwoTurnRadian = lastEstimatedTurn+estimatedTurn;
                     if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.2 * Math.PI){
                         Toast.makeText(contextt, "360 degree turn detected", Toast.LENGTH_LONG).show();
+                        estimatedTurn = 0;
                     }
                     else {
                         if (Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(Math.PI)) < 0.2 * Math.PI) {
                             Toast.makeText(contextt, "180 degree turn detected", Toast.LENGTH_LONG).show();
+                            estimatedTurn = 0;
                         }
                     }
                     lastEstimatedTurn = estimatedTurn;
@@ -193,10 +195,12 @@ public class LocalDirection implements SensorEventListener {
                     float lastTwoTurnRadian = lastEstimatedTurn+estimatedTurn;
                     if(Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(2*Math.PI)) < 0.2 * Math.PI){
                         Toast.makeText(contextt, "360 degree turn detected", Toast.LENGTH_LONG).show();
+                        estimatedTurn = 0;
                     }
                     else {
                         if (Math.abs(Math.abs(lastTwoTurnRadian) - Math.abs(Math.PI)) < 0.2 * Math.PI) {
                             Toast.makeText(contextt, "180 degree turn detected", Toast.LENGTH_LONG).show();
+                            estimatedTurn = 0;
                         }
                     }
                     lastEstimatedTurn = estimatedTurn;

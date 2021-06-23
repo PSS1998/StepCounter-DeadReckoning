@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import com.example.stepcounter.Constants;
@@ -46,6 +48,8 @@ public class RoutingService extends Service {
     Filter.medianFilter magneticHeading;
 
     private static ScatterPlot scatterPlot;
+
+    private int outOfStartingZone = 0;
 
     @Override
     public void onCreate() {
@@ -123,6 +127,7 @@ public class RoutingService extends Service {
         magneticHeading.clear();
         pointX += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.cos(magHeading));
         pointY += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.sin(magHeading));
+        checkReturnToStartingPoint(pointX, pointY);
         return new Point(pointX, pointY);
     }
 
@@ -138,8 +143,18 @@ public class RoutingService extends Service {
 //        return 0;
 //    }
 
-
-
+    public void checkReturnToStartingPoint(float pointX, float pointY){
+        if(outOfStartingZone == 0) {
+            if(((pointX*pointX) + (pointY*pointY)) > 5) {
+                outOfStartingZone = 1;
+            }
+        }
+        if(outOfStartingZone == 1) {
+            if(((pointX*pointX) + (pointY*pointY)) < 5) {
+                outOfStartingZone = 0;
+                Toast.makeText(getApplicationContext(), "You have returned to your starting point!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
 }
-
