@@ -40,6 +40,8 @@ public class RoutingService extends Service {
 
     public int stepCount;
 
+    private float userHeight;
+
     ArrayList<Float> magneticHeading = new ArrayList<Float>();
 
     private static ScatterPlot scatterPlot;
@@ -48,6 +50,7 @@ public class RoutingService extends Service {
     public void onCreate() {
         super.onCreate();
         setSharedPreferences();
+        userHeight = sharedPreferences.getFloat(StepCounterService.height, 168);
         stepCount = 0;
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         orientation = Orientation.getInstance(sensorManager);
@@ -119,8 +122,8 @@ public class RoutingService extends Service {
         else
             magHeading = magneticHeading.get(magneticHeading.size()-1);
         magneticHeading.clear();
-        pointX += (float) (ExtraFunctions.calculateDistance(1) * Math.cos(magHeading));
-        pointY += (float) (ExtraFunctions.calculateDistance(1) * Math.sin(magHeading));
+        pointX += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.cos(magHeading));
+        pointY += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.sin(magHeading));
         return new Point(pointX, pointY);
     }
 

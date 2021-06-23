@@ -15,9 +15,15 @@ public final class ExtraFunctions {
         return (float)degrees;
     }
 
-    public static float calculateDistance(int num_steps) {
-        double distance = num_steps*SettingsActivity.height*0.3937*0.414*2.54e-2;
+    public static float calculateDistance(int num_steps, float height) {
+        double distance = num_steps*height*0.3937*0.414*2.54e-2;
         return (float) distance;
+    }
+
+    public static int calculateCalories(int stepCounts, float m, float h) {
+        int a = 5;//m/s2
+        float height = h/100;
+        return (int) (stepCounts * ((0.035 * m) + ((a / height) * (0.029 * m))) / 150);
     }
 
     public static int floorMod(int divided, int divisor) {

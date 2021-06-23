@@ -263,7 +263,7 @@ public class StepCounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int initStepCount = 0;
-        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int)ExtraFunctions.calculateDistance(initStepCount)), String.valueOf(calculateCalories(initStepCount, userWeight, userHeight)));
+        Notification notification = getMyActivityNotification(String.valueOf(initStepCount), String.valueOf((int)ExtraFunctions.calculateDistance(initStepCount, userHeight)), String.valueOf(ExtraFunctions.calculateCalories(initStepCount, userWeight, userHeight)));
         startForeground(NOTIFICATION_ID, notification);
         return START_STICKY;
     }
@@ -310,13 +310,11 @@ public class StepCounterService extends Service {
     //NOTIFICATION
     private void updateNotification(int stepCount) {
         try {
-            updateNotification(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount)), String.valueOf(calculateCalories(stepCount, userWeight, userHeight)));
+            updateNotification(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount, userHeight)), String.valueOf(ExtraFunctions.calculateCalories(stepCount, userWeight, userHeight)));
         } catch (Exception e) {
             // TODO: 4/22/2021 show error
         }
     }
-
-
 
     private Notification getMyActivityNotification(String steps, String km, String calories) {
         createNotificationChannel();
@@ -349,9 +347,6 @@ public class StepCounterService extends Service {
         mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-
-
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -366,13 +361,6 @@ public class StepCounterService extends Service {
             }
         }
     }
-
-    public static int calculateCalories(Integer stepCounts, float m, float h) {
-        int a = 5;//m/s2
-        return (int) (stepCounts * ((0.035 * m) + ((a / h) * (0.029 * m))) / 150);
-    }
-
-
 
     private void handleUserActivity(int on_foot_confidence, int walking_confidence, int running_confidence) {
         on_foot = 0;
