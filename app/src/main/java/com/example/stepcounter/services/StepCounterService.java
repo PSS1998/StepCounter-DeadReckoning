@@ -29,6 +29,9 @@ import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.MainActivity;
 import com.example.stepcounter.R;
 import com.example.stepcounter.RoutingActivity;
+import com.example.stepcounter.sensors.Accelerometer;
+import com.example.stepcounter.sensors.StepCounterAccelerometer;
+import com.example.stepcounter.sensors.StepDetector;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -48,13 +51,11 @@ public class StepCounterService extends Service {
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private int bufferStep = 0;
-    private double MagnitudePrevious = 0;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
     private boolean isStepDetectorSensorPresent = false;
-    private float StepNum = 0;
 
     int on_foot = 0;
     int walking = 0;
@@ -381,15 +382,14 @@ public class StepCounterService extends Service {
 
         int foundStep = 0;
 
-        for(int i = 0; i<dataPointList.size(); i++){
-            if(i < dataPointList.size() - 1){
-                forwardSlope = dataPointList.get(i+1).getY() - dataPointList.get(i).getY();
-                downwardSlope = dataPointList.get(i).getY() - dataPointList.get(i - 1).getY();
+        for(int i = 1; i < dataPointList.size() - 1; i++){
+            forwardSlope = dataPointList.get(i+1).getY() - dataPointList.get(i).getY();
+            downwardSlope = dataPointList.get(i).getY() - dataPointList.get(i - 1).getY();
 
-                if(forwardSlope < 0 && downwardSlope > 0 && dataPointList.get(i).getY() > stepThreshold && dataPointList.get(i).getY() < noiseThreshold){
-                    foundStep = 1;
-                }
+            if(forwardSlope < 0 && downwardSlope > 0 && dataPointList.get(i).getY() > stepThreshold && dataPointList.get(i).getY() < noiseThreshold){
+                foundStep = 1;
             }
+
         }
         if(foundStep == 1){
             if(timeNs - lastStepTimeNs > STEP_DELAY_NS) {
