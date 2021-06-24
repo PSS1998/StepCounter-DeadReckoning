@@ -4,22 +4,24 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
+import com.example.stepcounter.LocalDirection;
+
 public class Gyroscope extends SensorListener {
-    private double velocityZ;
-    private double gradient = 0;
     private double timestamp;
-    private static final double NS2S = 1.0f / 1000000000.0f;
 
+    float[] gyroscopeValues;
     static private Gyroscope gyroscope;
+    private double gyroscopeTimestamp;
+    private LocalDirection localDirection;
 
-
-    private Gyroscope(SensorManager sensorManager) {
+    private Gyroscope(SensorManager sensorManager, LocalDirection localDirection) {
         super(sensorManager);
+        this.localDirection = localDirection;
     }
 
-    public static Gyroscope getInstance(SensorManager sensorManager) {
+    public static Gyroscope getInstance(SensorManager sensorManager, LocalDirection localDirection) {
         if (gyroscope == null)
-            gyroscope = new Gyroscope(sensorManager);
+            gyroscope = new Gyroscope(sensorManager,localDirection);
         return gyroscope;
     }
 
@@ -27,8 +29,16 @@ public class Gyroscope extends SensorListener {
         return super.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
-    public double getGradient() {
-        return gradient;
+    public float[] getGyroscopeValues() {
+        return gyroscopeValues;
+    }
+
+    public double getTimestamp() {
+        return timestamp;
+    }
+
+    public double getGyroscopeTimestamp() {
+        return gyroscopeTimestamp;
     }
 
     @Override
@@ -36,12 +46,14 @@ public class Gyroscope extends SensorListener {
         if (event != null) {
             if (timestamp == 0)
                 timestamp = event.timestamp;
-            double alpha = 0.8;
-            final double dT = (event.timestamp - timestamp) * NS2S;
-            float eventValue = event.values[2];
-            velocityZ = alpha * velocityZ + (1 - alpha) * eventValue;
-            gradient += velocityZ * dT;
+            gyroscopeTimestamp = (event.timestamp - timestamp) * LocalDirection.NS2S;
             timestamp = event.timestamp;
+            gyroscopeValues[0] = event.values[0];
+            gyroscopeValues[1] = event.values[1];
+            gyroscopeValues[2] = event.values[2];
+            this.localDirection.updateOnGyroscopeChanged();
+
         }
+
     }
 }

@@ -113,7 +113,7 @@ public class StepCounterService extends Service {
 
         inPocketDetector = new InPocketDetector(this, context);
 
-        localDirection = new LocalDirection(context);
+        localDirection = LocalDirection.getInstance(context);
 
         if(StepCounterService.mSeries1 == null) {
             StepCounterService.mSeries1 = new LineGraphSeries<>();
