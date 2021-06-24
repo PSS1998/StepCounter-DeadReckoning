@@ -37,9 +37,8 @@ public class Accelerometer extends SensorListener {
             if (timestamp == 0)
                 timestamp = event.timestamp;
             acceleration = Filter.LPF(event.values.clone(), acceleration);
-            rawAcceleration = acceleration;
+            rawAcceleration = event.values.clone();
             timestamp = event.timestamp;
-//            StepCounterService.
         }
     }
 }

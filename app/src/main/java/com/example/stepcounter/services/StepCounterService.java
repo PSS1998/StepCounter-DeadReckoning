@@ -52,6 +52,8 @@ public class StepCounterService extends Service {
     private Timer mTimer;
     private int bufferStep = 0;
 
+    private int gyroDriftCounter = 100;
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -86,7 +88,6 @@ public class StepCounterService extends Service {
     public static LineGraphSeries<DataPoint> mSeries2;
 
     private double lastMag = 0d;
-    private double avgMag = 0d;
     private double netMag = 0d;
 
     //peak detection variables
@@ -163,24 +164,11 @@ public class StepCounterService extends Service {
     }
 
     public void updateOnSensorChanged() {
-
         timeNs = (long) accelerometer.getTimestamp();
         mRawAccelValues = accelerometer.getRawAcceleration();
         lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
 
-        for (int i = 0; i < 3; i++) {
-            mRunningAccelTotal[i] = mRunningAccelTotal[i] - mAccelValueHistory[i][mCurReadIndex];
-            mAccelValueHistory[i][mCurReadIndex] = mRawAccelValues[i];
-            mRunningAccelTotal[i] = mRunningAccelTotal[i] + mAccelValueHistory[i][mCurReadIndex];
-            mCurAccelAvg[i] = mRunningAccelTotal[i] / SMOOTHING_WINDOW_SIZE;
-        }
-        mCurReadIndex++;
-        if(mCurReadIndex >= SMOOTHING_WINDOW_SIZE){
-            mCurReadIndex = 0;
-        }
-
-        double avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
-        netMag = lastMag - avgMag; //removes gravity effect
+        removeGravityFromAcceleration();
 
         updateGraphDataPoints();
 
@@ -207,7 +195,7 @@ public class StepCounterService extends Service {
             mCurReadIndex = 0;
         }
 
-        avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
+        double avgMag = Math.sqrt(Math.pow(mCurAccelAvg[0], 2) + Math.pow(mCurAccelAvg[1], 2) + Math.pow(mCurAccelAvg[2], 2));
 
         netMag = lastMag - avgMag; //removes gravity effect
     }
@@ -272,6 +260,12 @@ public class StepCounterService extends Service {
                     updateNotification(stepCounts);
 
                     editor.apply();
+
+                    gyroDriftCounter--;
+                    if(gyroDriftCounter == 0){
+                        gyroDriftCounter = 100;
+                        localDirection = new LocalDirection(context);
+                    }
                 }
             });
         }
