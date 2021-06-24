@@ -114,7 +114,7 @@ public class StepCounterService extends Service {
 
         inPocketDetector = new InPocketDetector(this, context);
 
-        localDirection = new LocalDirection(context);
+        localDirection = LocalDirection.getInstance(context);
 
         if(StepCounterService.mSeries1 == null) {
             StepCounterService.mSeries1 = new LineGraphSeries<>();
@@ -264,7 +264,7 @@ public class StepCounterService extends Service {
                     gyroDriftCounter--;
                     if(gyroDriftCounter == 0){
                         gyroDriftCounter = 100;
-                        localDirection = new LocalDirection(context);
+                        localDirection = LocalDirection.getInstance(context);
                     }
                 }
             });
