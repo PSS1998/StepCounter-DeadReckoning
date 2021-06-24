@@ -264,7 +264,7 @@ public class StepCounterService extends Service {
                     gyroDriftCounter--;
                     if(gyroDriftCounter == 0){
                         gyroDriftCounter = 100;
-                        localDirection = new LocalDirection(context);
+                        localDirection = LocalDirection.getInstance(context);
                     }
                 }
             });
