@@ -41,4 +41,14 @@ public class Gravity extends SensorListener {
         }
     }
 
+    @Override
+    public float[] getOrientationValues() {
+        return new float[0];
+    }
+
+    @Override
+    public long getTimestamp() {
+        return 0;
+    }
+
 }
