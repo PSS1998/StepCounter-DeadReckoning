@@ -9,7 +9,7 @@ import com.example.stepcounter.Filter;
 public class Accelerometer extends SensorListener {
     private float[] acceleration = new float[3];
     private float[] rawAcceleration = new float[3];
-    private double timestamp;
+    private long timestamp;
 
     public Accelerometer(SensorManager sensorManager) {
         super(sensorManager);
@@ -23,12 +23,17 @@ public class Accelerometer extends SensorListener {
         return rawAcceleration;
     }
 
-    public double getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
     public float[] getAcceleration() {
         return acceleration;
+    }
+
+    @Override
+    public float[] getOrientationValues() {
+        return new float[0];
     }
 
     @Override

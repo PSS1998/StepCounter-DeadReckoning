@@ -5,23 +5,28 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
 import com.example.stepcounter.LocalDirection;
+import com.example.stepcounter.observers.Publisher;
+import com.example.stepcounter.observers.Subscriber;
 
-public class Gyroscope extends SensorListener {
-    private double timestamp;
+import java.util.ArrayList;
 
+public class Gyroscope extends SensorListener implements Publisher {
+    public static final double NS2S = 1.0f / 1000000000.0f;
+
+    private static final ArrayList<Subscriber> subscribers = new ArrayList<>();
+    private static Gyroscope gyroscope;
+
+    private long timestamp;
     float[] gyroscopeValues;
-    static private Gyroscope gyroscope;
     private double gyroscopeTimestamp;
-    private LocalDirection localDirection;
 
-    private Gyroscope(SensorManager sensorManager, LocalDirection localDirection) {
+    private Gyroscope(SensorManager sensorManager) {
         super(sensorManager);
-        this.localDirection = localDirection;
     }
 
-    public static Gyroscope getInstance(SensorManager sensorManager, LocalDirection localDirection) {
+    public static Gyroscope getInstance(SensorManager sensorManager) {
         if (gyroscope == null)
-            gyroscope = new Gyroscope(sensorManager,localDirection);
+            gyroscope = new Gyroscope(sensorManager);
         return gyroscope;
     }
 
@@ -29,11 +34,11 @@ public class Gyroscope extends SensorListener {
         return super.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
-    public float[] getGyroscopeValues() {
+    public float[] getOrientationValues() {
         return gyroscopeValues;
     }
 
-    public double getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
@@ -46,14 +51,21 @@ public class Gyroscope extends SensorListener {
         if (event != null) {
             if (timestamp == 0)
                 timestamp = event.timestamp;
-            gyroscopeTimestamp = (event.timestamp - timestamp) * LocalDirection.NS2S;
+            gyroscopeTimestamp = (event.timestamp - timestamp) * Gyroscope.NS2S;
             timestamp = event.timestamp;
             gyroscopeValues[0] = event.values[0];
             gyroscopeValues[1] = event.values[1];
             gyroscopeValues[2] = event.values[2];
-            this.localDirection.updateOnGyroscopeChanged();
-
+            this.publish();
         }
+    }
+    public void register(Subscriber subscriber) {
+        Gyroscope.subscribers.add(subscriber);
+    }
 
+    @Override
+    public void publish() {
+        for (Subscriber subscriber: Gyroscope.subscribers)
+            subscriber.update();
     }
 }

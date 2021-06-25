@@ -31,4 +31,7 @@ abstract public class SensorListener implements SensorEventListener {
 
     }
 
+    abstract public float[] getOrientationValues();
+
+    abstract public long getTimestamp();
 }

@@ -40,4 +40,14 @@ public class Magnetometer extends SensorListener {
             timestamp = event.timestamp;
         }
     }
+
+    @Override
+    public float[] getOrientationValues() {
+        return new float[0];
+    }
+
+    @Override
+    public long getTimestamp() {
+        return 0;
+    }
 }
