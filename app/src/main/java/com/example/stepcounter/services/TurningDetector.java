@@ -84,7 +84,9 @@ public class TurningDetector implements Publisher, Subscriber {
         this.addDirection();
         this.updateDirectionsData();
         this.calculateCurrentTurnDegree();
-        if (this.hasTurned())
+        if (this.hasTurned()) {
+            this.directions.clear();
             this.publish();
+        }
     }
 }
