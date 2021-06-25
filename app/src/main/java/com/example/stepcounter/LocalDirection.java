@@ -24,14 +24,13 @@ public class LocalDirection {
         orientation = Orientation.getInstance(sensorManager);
         this.turning180Detector = new TurningDetector(sensorManager, (float)Math.PI, 3);
         this.turning360Detector = new TurningDetector(sensorManager, 2 * (float)Math.PI, 5);
-        localDirection.turning180Detector.register(new Turning180DegreeAlarm());
-        localDirection.turning360Detector.register(new Turning360DegreeAlarm());
+        this.turning180Detector.register(new Turning180DegreeAlarm());
+        this.turning360Detector.register(new Turning360DegreeAlarm());
     }
 
     public static LocalDirection getInstance(Context context) {
-        if (localDirection == null) {
+        if (localDirection == null)
             localDirection = new LocalDirection(context);
-        }
         return localDirection;
     }
 
