@@ -134,10 +134,10 @@ public class ScatterPlot {
     private double getMaxBound() {
         double max = 0;
         for (double num : xList)
-            if (max < Math.abs(num))
+            if (Math.abs(max) < Math.abs(num))
                 max = num;
         for (double num : yList)
-            if (max < Math.abs(num))
+            if (Math.abs(max) < Math.abs(num))
                 max = num;
         return (Math.abs(max)*1.1 / 10) * 10 + 10; //rounding up to the nearest tenth
     }
