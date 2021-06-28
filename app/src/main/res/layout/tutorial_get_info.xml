@@ -4,47 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@drawable/footprints">
+    android:background="@drawable/footprints"
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="258dp"
         android:layout_height="65dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginTop="100dp"
         android:text="For the app to function properly, please complete your profile!"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/Height_tutorial"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="11dp"
         android:text="Height (cm)"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.122"
+        app:layout_constraintBottom_toTopOf="@+id/Height_tutorial"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="276dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="11dp"
         android:text="Weight (kg)"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.121"
+        app:layout_constraintBottom_toTopOf="@+id/Weight_tutorial"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/Height_tutorial" />
 
     <Button
         android:id="@+id/continueButton"
@@ -62,6 +61,7 @@
         android:id="@+id/Height_tutorial"
         android:layout_width="324dp"
         android:layout_height="0dp"
+        android:layout_marginTop="30dp"
         android:drawablePadding="10dp"
         android:hint="i.e. 180"
         android:inputType="numberDecimal"
@@ -70,13 +70,13 @@
         android:textColorHint="#92877D7D"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
         android:id="@+id/Weight_tutorial"
         android:layout_width="324dp"
         android:layout_height="0dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="30dp"
         android:drawablePadding="10dp"
         android:hint="i.e. 60"
         android:inputType="numberDecimal"
@@ -84,23 +84,19 @@
         android:textColor="#FF000000"
         android:textColorHint="#92877D7D"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/Height_tutorial" />
 
     <Switch
         android:id="@+id/recognitionEnSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
-        android:layout_marginBottom="156dp"
+        android:layout_marginTop="150dp"
         android:text="Enable Activity Recognition"
         android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/continueButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.225"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Height"
+        app:layout_constraintTop_toBottomOf="@+id/Weight_tutorial"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
