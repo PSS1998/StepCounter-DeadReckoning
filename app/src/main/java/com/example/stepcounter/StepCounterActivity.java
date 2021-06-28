@@ -35,6 +35,7 @@ public class StepCounterActivity extends AppCompatActivity {
     private Intent stepCounterIntent;
     private float userHeight;
     private float userWeight;
+    private Button stopButton;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -63,6 +64,8 @@ public class StepCounterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 resetStepCountData();
+                stopButton.setEnabled(true);
+                stopButton.setAlpha(1);
             }
         });
 
@@ -72,6 +75,16 @@ public class StepCounterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent myIntent = new Intent(StepCounterActivity.this, RoutingActivity.class);
                 startActivity(myIntent);
+            }
+        });
+
+        this.stopButton = findViewById(R.id.stop);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopStepCountData();
+                stopButton.setEnabled(false);
+                stopButton.setAlpha(0.5f);
             }
         });
 
@@ -140,16 +153,24 @@ public class StepCounterActivity extends AppCompatActivity {
         }
     }
 
+    private void stopStepCountData() {
+        editor.putInt(StepCounterService.stepDbName, 0);
+        RoutingService.getScatter().clearPoints();
+        stopService(stepCounterIntent);
+        stopService(routeIntent);
+        editor.apply();
+        StepCounterService.deactivate();
+    }
+
     private void resetStepCountData() {
         editor.putInt(StepCounterService.stepDbName, 0);
-//        editor.putString(RoutingService.routePoints, "");
         RoutingService.getScatter().clearPoints();
-
         stopService(stepCounterIntent);
         startService(stepCounterIntent);
         stopService(routeIntent);
         startService(routeIntent);
         editor.apply();
+        StepCounterService.activate();
     }
 
 

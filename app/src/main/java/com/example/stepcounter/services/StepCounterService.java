@@ -48,6 +48,7 @@ public class StepCounterService extends Service {
     public static final String height = "height";
     public static final String weight = "weight";
     public static final String activityRecognitionEnabled = "activityRecognitionEnabled";
+    private static boolean active = true;
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private int bufferStep = 0;
@@ -239,8 +240,10 @@ public class StepCounterService extends Service {
     @Override
     public void onDestroy() {
         stopForeground(true);
+        System.out.println("here???");
         super.onDestroy();
     }
+
 
     class TimeDisplay extends TimerTask {
         @Override
@@ -248,6 +251,8 @@ public class StepCounterService extends Service {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    if (!active)
+                        return;
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
                     if (isStepDetectorSensorPresent) {
                         stepCounts += stepDetector.getNumberOfSteps();
@@ -442,4 +447,11 @@ public class StepCounterService extends Service {
         return stepThresholds;
     }
 
+    public static void activate() {
+        active = true;
+    }
+
+    public static void deactivate() {
+        active = false;
+    }
 }
