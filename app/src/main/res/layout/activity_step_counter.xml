@@ -30,6 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="174dp"
         android:layout_height="137dp"
         android:layout_marginTop="98dp"
@@ -46,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text=" تعداد قدم ها"
+            android:text="Steps"
             android:textAlignment="center"
             android:textSize="18sp" />
 
@@ -103,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text=" مسافت (متر)"
+                android:text="Distance(m)"
                 android:textAlignment="center" />
 
             <TextView
@@ -130,7 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="کالری"
+                android:text="Calories burned(Cal)"
                 android:textAlignment="center" />
 
             <TextView
@@ -146,4 +147,14 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/activity_type"
+        android:layout_width="95dp"
+        android:layout_height="27dp"
+        android:text="TextView"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

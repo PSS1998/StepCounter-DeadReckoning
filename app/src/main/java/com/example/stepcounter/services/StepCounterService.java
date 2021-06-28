@@ -98,6 +98,7 @@ public class StepCounterService extends Service {
     private int activityRecognitionEnable = 0;
     private Accelerometer accelerometer;
     private StepDetector stepDetector;
+    public static String activityType = "";
 
     private static final int STEP_DELAY_NS = Constants.STEP_COUNTER_PERIOD*1000000;
     private long timeNs = 0;
@@ -149,7 +150,11 @@ public class StepCounterService extends Service {
                     int on_foot_confidence = intent.getIntExtra("on_foot_confidence", 0);
                     int walking_confidence = intent.getIntExtra("walking_confidence", 0);
                     int running_confidence = intent.getIntExtra("running_confidence", 0);
+                    System.out.println("on_foot_confidence" + on_foot_confidence);
+                    System.out.println("walking_confidence" + walking_confidence);
+                    System.out.println("running_confidence" + running_confidence);
                     handleUserActivity(on_foot_confidence, walking_confidence, running_confidence);
+//                    activityType = (on_foot == 0) ? "Not Moving" : (walking == 1) ? "Walking" : "Running";
                 }
             }
         };
@@ -327,12 +332,13 @@ public class StepCounterService extends Service {
     }
 
     private void handleUserActivity(int on_foot_confidence, int walking_confidence, int running_confidence) {
+        System.out.println("activity confidence on foot: " + on_foot_confidence + "walking: " + walking_confidence + "running: " + running_confidence);
         on_foot = 0;
         walking = 1;
         running = 0;
         if(on_foot_confidence > Constants.CONFIDENCE){
             on_foot = 1;
-            if(running_confidence > walking_confidence){
+            if(running_confidence > on_foot_confidence){
                 running = 1;
                 walking = 0;
             }
@@ -387,11 +393,7 @@ public class StepCounterService extends Service {
         }
         if(foundStep == 1){
             if(timeNs - lastStepTimeNs > STEP_DELAY_NS) {
-                if (ignore_activity_recognition == 0 && on_foot == 1) {
-                    lastStepTimeNs = timeNs;
-                    bufferStep += 1;
-                }
-                if (ignore_activity_recognition == 1) {
+                if ((ignore_activity_recognition == 0 && on_foot == 1) || ignore_activity_recognition == 1) {
                     lastStepTimeNs = timeNs;
                     bufferStep += 1;
                 }
@@ -416,7 +418,7 @@ public class StepCounterService extends Service {
             ignore_activity_recognition = 1;
         }
 
-        if(ignore_activity_recognition == 1){
+        if(ignore_activity_recognition == 1 || walking == 1){
             if (InPocketDetector.pocket == 0) {
                 stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
                 stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INHAND;
@@ -432,21 +434,6 @@ public class StepCounterService extends Service {
             }
         }
         else {
-            if (walking == 1) {
-                if (InPocketDetector.pocket == 0) {
-                    stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
-                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INHAND;
-                }
-                if (InPocketDetector.pocket == 1) {
-                    stepThresholds[0] = Constants.STEP_THRESHOLD_INPOCKET;
-                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
-                }
-                // InPocketDetector sensors not availible
-                if (InPocketDetector.pocket == -1) {
-                    stepThresholds[0] = Constants.STEP_THRESHOLD_INHAND;
-                    stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_INPOCKET;
-                }
-            }
             if (running == 1) {
                 stepThresholds[0] = Constants.STEP_THRESHOLD_RUNNING;
                 stepThresholds[1] = Constants.STEP_NOISE_THRESHOLD_RUNNING;

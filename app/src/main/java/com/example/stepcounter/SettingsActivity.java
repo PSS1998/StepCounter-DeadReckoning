@@ -31,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 float height_info = sharedPreferences.getFloat(MainActivity.height, Constants.DEFAULT_HEIGHT);
                 float weight_info = sharedPreferences.getFloat(MainActivity.weight, Constants.DEFAULT_WEIGHT);
-                int activityRecognitionEnable = sharedPreferences.getInt(MainActivity.activityRecognitionEnabled, 0);
+                int activityRecognitionEnable = 0;
                 EditText editTextHeight = findViewById(R.id.Height);
                 EditText editTextWeight = findViewById(R.id.Weight);
                 @SuppressLint("UseSwitchCompatOrMaterialCode")

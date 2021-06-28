@@ -27,6 +27,7 @@ public class StepCounterActivity extends AppCompatActivity {
     private TextView stepsText;
     private TextView distanceText;
     private TextView caloryText;
+    private TextView activityTypeText;
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private SharedPreferences.Editor editor;
@@ -47,6 +48,7 @@ public class StepCounterActivity extends AppCompatActivity {
         stepsText = findViewById(R.id.stepsInfo);
         distanceText = findViewById(R.id.distanceInfo);
         caloryText = findViewById(R.id.caloryInfo);
+        activityTypeText = findViewById(R.id.activity_type);
 
         startStepCounter();
         startRouting();
@@ -116,6 +118,7 @@ public class StepCounterActivity extends AppCompatActivity {
         stepsText.setText(steps);
         distanceText.setText(km);
         caloryText.setText(calories);
+        activityTypeText.setText(StepCounterService.activityType);
         progress.setProgressWithAnimation(Integer.parseInt(steps), (long) 1000);
         if ((Integer.parseInt(steps) / progress.getProgressMax()) < 0.25) {
             progress.setProgressBarColor(Color.YELLOW);

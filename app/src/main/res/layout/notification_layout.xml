@@ -19,34 +19,27 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/notification_kmtext"
-                style="@style/TextAppearance.Compat.Notification.Info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=" متر" />
-
-            <TextView
                 android:id="@+id/notification_km"
                 style="@style/TextAppearance.Compat.Notification.Info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="1" />
+                android:text="1"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/notification_kmtext"
+                style="@style/TextAppearance.Compat.Notification.Info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="m" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/notification_calleritext"
-                style="@style/TextAppearance.Compat.Notification.Info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=" کالری" />
 
             <TextView
                 android:id="@+id/notification_calleri"
@@ -54,7 +47,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="1" />
+                android:text="1"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/notification_calleritext"
+                style="@style/TextAppearance.Compat.Notification.Info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=" Calories" />
         </LinearLayout>
 
         <LinearLayout
@@ -63,20 +65,21 @@
             android:layout_weight="1">
 
             <TextView
-                android:id="@+id/notification_stepstext"
-                style="@style/TextAppearance.Compat.Notification.Info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=" قدم" />
-
-            <TextView
                 android:id="@+id/notification_steps"
                 style="@style/TextAppearance.Compat.Notification.Info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="" />
+                android:text=""
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/notification_stepstext"
+                style="@style/TextAppearance.Compat.Notification.Info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=" Steps" />
         </LinearLayout>
 
     </LinearLayout>
