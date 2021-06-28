@@ -8,13 +8,15 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="349dp"
-        android:layout_height="358dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/startWalking"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/running" />
+        app:layout_constraintDimensionRatio="1:1"
+        app:srcCompat="@drawable/main_activity_bg"
+        android:scaleType="centerCrop" />
 
 <!--    <ImageView-->
 <!--        android:id="@+id/applicationSettings"-->
