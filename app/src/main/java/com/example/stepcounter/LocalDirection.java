@@ -10,6 +10,9 @@ import com.example.stepcounter.services.TurningDetector;
 
 
 public class LocalDirection {
+    private static final float HALF_TURN_TIME = 3f;
+    private static final float COMPLETE_TURN_TIME = 7f;
+
     private static LocalDirection localDirection;
     private final TurningDetector turning180Detector;
     private final TurningDetector turning360Detector;
@@ -22,8 +25,8 @@ public class LocalDirection {
         this.context = context;
         SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         orientation = Orientation.getInstance(sensorManager);
-        this.turning180Detector = new TurningDetector(sensorManager, (float)Math.PI, 3);
-        this.turning360Detector = new TurningDetector(sensorManager, 2 * (float)Math.PI, 5);
+        this.turning180Detector = new TurningDetector(sensorManager, (float)Math.PI, HALF_TURN_TIME);
+        this.turning360Detector = new TurningDetector(sensorManager, 2 * (float)Math.PI, COMPLETE_TURN_TIME);
         this.turning180Detector.register(new Turning180DegreeAlarm());
         this.turning360Detector.register(new Turning360DegreeAlarm());
     }

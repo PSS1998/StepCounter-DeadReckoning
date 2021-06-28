@@ -17,7 +17,7 @@ public class Gyroscope extends SensorListener implements Publisher {
     private static Gyroscope gyroscope;
 
     private long timestamp;
-    float[] gyroscopeValues;
+    float[] gyroscopeValues = new float[3];
     private double gyroscopeTimestamp;
 
     private Gyroscope(SensorManager sensorManager) {

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TurningDetector implements Publisher, Subscriber {
-    private static final double ERROR_THRESHOLD = 0.1 * Math.PI;
+    private static final double ERROR_THRESHOLD = 0.03 * Math.PI;
+    private static final int CONFIDENT_TURN__MIDDLE = 10;
 
     private final ArrayList<Subscriber> subscribers = new ArrayList<>();
     private final float turningDegree;
@@ -65,8 +66,40 @@ public class TurningDetector implements Publisher, Subscriber {
         this.currentTurn = maxTurn;
     }
 
+    private boolean hasTurnedClockwise() {
+        float degreeChangeStep = this.turningDegree / CONFIDENT_TURN__MIDDLE;
+        float lastDirection = this.directions.get(this.directions.size() - 1).second;
+        int counter = 0;
+        for (int i = this.directions.size() - 1; i >= 0; i--) {
+            float meetDegree = lastDirection - degreeChangeStep * counter;
+            if (Math.abs(this.directions.get(i).second - meetDegree) % (float)(2 * Math.PI) < TurningDetector.ERROR_THRESHOLD) {
+                counter++;
+                if (counter == CONFIDENT_TURN__MIDDLE)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasTurnedCounterClockwise() {
+        float degreeChangeStep = this.turningDegree / CONFIDENT_TURN__MIDDLE;
+        float lastDirection = this.directions.get(this.directions.size() - 1).second;
+        int counter = 0;
+        for (int i = this.directions.size() - 1; i >= 0; i--) {
+            float meetDegree = lastDirection + degreeChangeStep * counter;
+            if (Math.abs(this.directions.get(i).second - meetDegree) % (float)(2 * Math.PI) < TurningDetector.ERROR_THRESHOLD) {
+                counter++;
+                if (counter == CONFIDENT_TURN__MIDDLE)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     private boolean hasTurned() {
-        return Math.abs(this.currentTurn - this.turningDegree) <= TurningDetector.ERROR_THRESHOLD;
+        if (Math.abs(this.currentTurn - this.turningDegree) > TurningDetector.ERROR_THRESHOLD)
+            return false;
+        return this.hasTurnedClockwise() || this.hasTurnedCounterClockwise();
     }
 
     public void register(Subscriber subscriber) {
