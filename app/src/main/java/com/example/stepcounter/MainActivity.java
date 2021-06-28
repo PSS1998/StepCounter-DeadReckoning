@@ -119,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_settings) {
             startSettings();
             return true;
+        } else if (item.getItemId() == R.id.action_debugging) {
+            startDebugging();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -126,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
     private void startSettings() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
+    }
+    private void startDebugging() {
+        Intent debugIntent = new Intent(MainActivity.this, StepCounterDebugActivity.class);
+        startActivity(debugIntent);
     }
 
     private void setUserPhysicalInfo() {

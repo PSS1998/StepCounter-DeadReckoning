@@ -4,6 +4,11 @@
     <item
         android:id="@+id/action_settings"
         app:showAsAction="never"
-        android:title="Settings">
+        android:title="Setting">
+    </item>
+    <item
+        android:id="@+id/action_debugging"
+        app:showAsAction="never"
+        android:title="Debug">
     </item>
 </menu>
