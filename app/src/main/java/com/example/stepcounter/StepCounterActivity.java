@@ -3,7 +3,10 @@ package com.example.stepcounter;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
+import android.app.job.JobParameters;
+import android.app.job.JobService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -19,6 +24,7 @@ import com.example.stepcounter.services.RoutingService;
 import com.example.stepcounter.services.StepCounterService;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,7 +42,10 @@ public class StepCounterActivity extends AppCompatActivity {
     private Intent stepCounterIntent;
     private float userHeight;
     private float userWeight;
+    private ImageButton graphButton;
     private Button stopButton;
+    private GraphButtonAnimator graphButtonAnimator;
+    private final int graphButtonAnimatorInterval = 10000;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -70,8 +79,8 @@ public class StepCounterActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton graphButton = findViewById(R.id.graphButton);
-        graphButton.setOnClickListener(new View.OnClickListener() {
+        this.graphButton = findViewById(R.id.graphButton);
+        this.graphButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(StepCounterActivity.this, RoutingActivity.class);
@@ -88,7 +97,8 @@ public class StepCounterActivity extends AppCompatActivity {
                 stopButton.setAlpha(0.5f);
             }
         });
-
+        this.graphButtonAnimator = new GraphButtonAnimator();
+        new Timer().schedule(this.graphButtonAnimator, 0, this.graphButtonAnimatorInterval);
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -117,7 +127,19 @@ public class StepCounterActivity extends AppCompatActivity {
             });
         }
     }
-    
+
+    public class GraphButtonAnimator extends TimerTask{
+        @Override
+        public void run() {
+            graphButton.animate().scaleX(0.5f).scaleY(0.5f).rotation(360).setDuration(1000).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    graphButton.animate().scaleX(1).scaleY(1).rotation(0).setDuration(1000);
+                }
+            });
+        }
+    }
+
     private void startStepCounter() {
         stepCounterIntent = new Intent(this, StepCounterService.class);
         startService(stepCounterIntent);
@@ -173,6 +195,4 @@ public class StepCounterActivity extends AppCompatActivity {
         editor.apply();
         StepCounterService.activate();
     }
-
-
 }
