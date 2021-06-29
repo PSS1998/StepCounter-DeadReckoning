@@ -129,7 +129,7 @@ public class StepCounterActivity extends AppCompatActivity {
     }
 
     private void updateStepCounter(String steps, String km, String calories) {
-        stepsText.setText(steps);
+        stepsText.setText(steps + " steps");
         distanceText.setText(km);
         caloryText.setText(calories);
         activityTypeText.setText(StepCounterService.activityType);
