@@ -50,14 +50,15 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="20dp"
         app:layout_constraintVertical_bias="0.0">
+
         <Button
             android:id="@+id/graphButton"
-            android:text="Show Movement"
             android:layout_width="match_parent"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp" />
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:text="Show Rout" />
 
         <Button
             android:id="@+id/reset"
