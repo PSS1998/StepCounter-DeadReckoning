@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.stepcounter.services.RoutingService;
@@ -69,7 +70,7 @@ public class StepCounterActivity extends AppCompatActivity {
             }
         });
 
-        Button graphButton = findViewById(R.id.graphButton);
+        ImageButton graphButton = findViewById(R.id.graphButton);
         graphButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
