@@ -42,6 +42,7 @@ public class RoutingService extends Service {
     Orientation orientation;
 
     public int stepCount;
+    private int initialStepCounts = 0;
 
     private float userHeight;
 
@@ -61,6 +62,9 @@ public class RoutingService extends Service {
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         orientation = Orientation.getInstance(sensorManager);
         scatterPlot = ScatterPlot.getInstance();
+
+        initialStepCounts = sharedPreferences.getInt(stepDbName, 0);
+
         setTimer();
 
     }
@@ -119,19 +123,25 @@ public class RoutingService extends Service {
     }
 
     public void updateRoute (Point point) {
+        if((point.getPointY() == 0) && (point.getPointX() == 0)){
+            return;
+        }
         scatterPlot.addPoint(point.getPointY(), point.getPointX());
     }
 
     public Point calculatePoint() {
-        float pointX = scatterPlot.getLastYPoint();
-        float pointY = scatterPlot.getLastXPoint();
-        float magHeading = 0;
-        magHeading = magneticHeading.get();
-        magneticHeading.clear();
-        pointX += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.cos(magHeading));
-        pointY += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.sin(magHeading));
-        checkReturnToStartingPoint(pointX, pointY);
-        return new Point(pointX, pointY);
+        if((stepCount - initialStepCounts) == (scatterPlot.getListSize())) {
+            float pointX = scatterPlot.getLastYPoint();
+            float pointY = scatterPlot.getLastXPoint();
+            float magHeading = 0;
+            magHeading = magneticHeading.get();
+            magneticHeading.clear();
+            pointX += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.cos(magHeading));
+            pointY += (float) (ExtraFunctions.calculateDistance(1, userHeight) * Math.sin(magHeading));
+            checkReturnToStartingPoint(pointX, pointY);
+            return new Point(pointX, pointY);
+        }
+        return new Point(0,0);
     }
 
     public static ScatterPlot getScatter() {

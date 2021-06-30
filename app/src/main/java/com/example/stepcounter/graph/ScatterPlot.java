@@ -142,6 +142,10 @@ public class ScatterPlot {
         return (Math.abs(max)*1.1 / 10) * 10 + 10; //rounding up to the nearest tenth
     }
 
+    public int getListSize() {
+        return xList.size();
+    }
+
 //    public void savePointInSharePreferences (Point point) {
 //        Gson gson = new Gson();
 //        ArrayList <Point> points = loadPointsFromSharedPreferences();
