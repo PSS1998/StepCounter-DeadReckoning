@@ -24,6 +24,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
+import com.example.stepcounter.GyroOrientation;
 import com.example.stepcounter.InPocketDetector;
 import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.MainActivity;
@@ -109,6 +110,7 @@ public class StepCounterService extends Service {
     Context context = this;
 
     LocalDirection localDirection;
+    GyroOrientation gyroOrientation;
 
     @Override
     public void onCreate() {
@@ -117,6 +119,7 @@ public class StepCounterService extends Service {
         inPocketDetector = new InPocketDetector(this, context);
 
         localDirection = LocalDirection.getInstance(context);
+        gyroOrientation = new GyroOrientation(context);
 
         if(StepCounterService.mSeries1 == null) {
             StepCounterService.mSeries1 = new LineGraphSeries<>();
@@ -275,6 +278,7 @@ public class StepCounterService extends Service {
                     if(gyroDriftCounter == 0){
                         gyroDriftCounter = 100;
                         localDirection = LocalDirection.getInstance(context);
+                        gyroOrientation = new GyroOrientation(context);
                     }
                 }
             });

@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.Filter;
-import com.example.stepcounter.LocalDirection;
+import com.example.stepcounter.GyroOrientation;
 import com.example.stepcounter.sensors.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
@@ -98,7 +98,7 @@ public class RoutingService extends Service {
                 public void run() {
                     orientation.updateOrientationAngles();
                     float[] orientationAngles = orientation.getOrientationAngles();
-                    double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
+                    double gyroHeading = GyroOrientation.getOrientationBasedOnGyroscope();
                     if(gyroHeading == -10){
                         gyroHeading = orientationAngles[0];
                     }
