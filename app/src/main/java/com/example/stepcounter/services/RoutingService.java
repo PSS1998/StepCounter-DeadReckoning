@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import com.example.stepcounter.Constants;
 import com.example.stepcounter.ExtraFunctions;
 import com.example.stepcounter.Filter;
-import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.sensors.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
@@ -29,12 +28,9 @@ public class RoutingService extends Service {
     public static final String dbName = "StepCounter";
     public static final String stepDbName = "stepCounts";
 
-    public static final String routePoints = "routePoints";
-
     public static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
 
-    //    private static int stepFlag = 0;
     private Handler mHandler = new Handler();
     private Timer mTimer;
     private static float rotation = 0;
@@ -94,10 +90,7 @@ public class RoutingService extends Service {
                 public void run() {
                     orientation.updateOrientationAngles();
                     float[] orientationAngles = orientation.getOrientationAngles();
-                    double gyroHeading = LocalDirection.getOrientationBasedOnGyroscope();
-                    if(gyroHeading == -10){
-                        gyroHeading = orientationAngles[0];
-                    }
+                    double gyroHeading = orientationAngles[0];
                     float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
                     magneticHeading.addValue(compHeading);
                     float degrees = ExtraFunctions.radsToDegrees(compHeading);
@@ -137,14 +130,6 @@ public class RoutingService extends Service {
     public static ScatterPlot getScatter() {
         return scatterPlot;
     }
-
-//    public static int getSteps() {
-//        stepFlag = (stepFlag + 1) % 5;
-//        if(stepFlag == 4) {
-//            return 1;
-//        }
-//        return 0;
-//    }
 
     public void checkReturnToStartingPoint(float pointX, float pointY){
         if(outOfStartingZone == 0) {

@@ -50,8 +50,4 @@ public class LocalDirection {
             Toast.makeText(context, "360 degree turn detected", Toast.LENGTH_LONG).show();
         }
     }
-
-    public static float getOrientationBasedOnGyroscope() {
-        return -10;
-    }
 }

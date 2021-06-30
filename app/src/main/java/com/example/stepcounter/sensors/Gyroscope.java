@@ -4,7 +4,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-import com.example.stepcounter.LocalDirection;
 import com.example.stepcounter.observers.Publisher;
 import com.example.stepcounter.observers.Subscriber;
 

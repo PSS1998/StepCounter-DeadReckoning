@@ -43,16 +43,13 @@ public class RotationVector extends SensorListener implements Publisher {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // Convert the rotation-vector to a 4x4 matrix.
         SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
         SensorManager.getOrientation(rotationMatrix, orientationVals);
-//        orientationVals[0] -= LocalDirection.initialHeadingBias;
         orientationVals[0] = (float)((orientationVals[0] < 0) ? (orientationVals[0] + (2.0 * Math.PI)) : orientationVals[0]);
         if (timestamp == 0)
             timestamp = event.timestamp;
         timestamp = event.timestamp;
         this.publish();
-//        localDirection.updateOnRotationVectorChanged();
     }
 
     public void register(Subscriber subscriber) {
