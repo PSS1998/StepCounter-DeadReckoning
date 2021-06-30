@@ -343,7 +343,7 @@ public class StepCounterService extends Service {
         running = 0;
         if(on_foot_confidence > Constants.CONFIDENCE){
             on_foot = 1;
-            if(running_confidence > on_foot_confidence){
+            if(running_confidence > walking_confidence){
                 running = 1;
                 walking = 0;
             }
