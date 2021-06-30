@@ -102,7 +102,7 @@
             android:layout_weight="0.50">
             <Button
                 android:id="@+id/stop"
-                android:backgroundTint="#A50A0A"
+                android:backgroundTint="#DC2D2D"
                 android:text="stop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
