@@ -53,8 +53,6 @@ public class StepCounterService extends Service {
     private Timer mTimer;
     private int bufferStep = 0;
 
-    private int gyroDriftCounter = 100;
-
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
@@ -134,7 +132,6 @@ public class StepCounterService extends Service {
                 if(sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) != null) {
                     stepDetector = StepDetector.getInstance(sensorManager);
                     stepDetector.start(SensorManager.SENSOR_DELAY_NORMAL);
-//                    isStepDetectorSensorPresent = true;
                 }
             }
             if (!isStepDetectorSensorPresent) {
@@ -155,7 +152,6 @@ public class StepCounterService extends Service {
                     System.out.println("walking_confidence" + walking_confidence);
                     System.out.println("running_confidence" + running_confidence);
                     handleUserActivity(on_foot_confidence, walking_confidence, running_confidence);
-//                    activityType = (on_foot == 0) ? "Not Moving" : (walking == 1) ? "Walking" : "Running";
                 }
             }
         };
@@ -170,7 +166,7 @@ public class StepCounterService extends Service {
     }
 
     public void updateOnSensorChanged() {
-        timeNs = (long) accelerometer.getTimestamp();
+        timeNs = accelerometer.getTimestamp();
         mRawAccelValues = accelerometer.getRawAcceleration();
         lastMag = Math.sqrt(Math.pow(mRawAccelValues[0], 2) + Math.pow(mRawAccelValues[1], 2) + Math.pow(mRawAccelValues[2], 2));
 
@@ -220,7 +216,6 @@ public class StepCounterService extends Service {
             mTimer.cancel();
         else
             mTimer = new Timer();
-
         mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, Constants.STEP_COUNTER_PERIOD);
     }
 
@@ -253,28 +248,23 @@ public class StepCounterService extends Service {
                 public void run() {
                     if (!active)
                         return;
-                    int stepCounts = sharedPreferences.getInt(stepDbName, 0);
+                    int currentSteps = sharedPreferences.getInt(stepDbName, 0);
+                    int updatedStepCounts = currentSteps;
                     if (isStepDetectorSensorPresent) {
-                        stepCounts += stepDetector.getNumberOfSteps();
-                        editor.putInt(stepDbName, stepCounts);
+                        updatedStepCounts += stepDetector.getNumberOfSteps();
+                        editor.putInt(stepDbName, updatedStepCounts);
                         stepDetector.resetNumberOfSteps();
                     }
                     else {
                         if (bufferStep < 6 && bufferStep > 0) {
-                            stepCounts++;
-                            editor.putInt(stepDbName, stepCounts);
+                            updatedStepCounts++;
+                            editor.putInt(stepDbName, updatedStepCounts);
                         }
                         bufferStep = 0;
                     }
-
-                    updateNotification(stepCounts);
-
-                    editor.apply();
-
-                    gyroDriftCounter--;
-                    if(gyroDriftCounter == 0){
-                        gyroDriftCounter = 100;
-                        localDirection = LocalDirection.getInstance(context);
+                    if (updatedStepCounts > currentSteps) {
+                        updateNotification(updatedStepCounts);
+                        editor.apply();
                     }
                 }
             });

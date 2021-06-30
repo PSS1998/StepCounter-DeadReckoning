@@ -35,8 +35,6 @@ public class Magnetometer extends SensorListener {
             if (timestamp == 0)
                 timestamp = event.timestamp;
             magneticField = Filter.LPF(event.values.clone(), magneticField);
-//            magneticField = Filter.LPF(magneticField, event.values.clone());
-//            System.arraycopy(event.values, 0, magneticField, 0, magneticField.length);
             timestamp = event.timestamp;
         }
     }

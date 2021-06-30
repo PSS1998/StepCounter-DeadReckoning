@@ -57,7 +57,6 @@ public class RoutingService extends Service {
         orientation = Orientation.getInstance(sensorManager);
         scatterPlot = ScatterPlot.getInstance();
         setTimer();
-
     }
 
     @SuppressLint("CommitPrefEdits")
