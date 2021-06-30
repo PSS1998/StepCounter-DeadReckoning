@@ -17,7 +17,7 @@ public class Constants {
     public static final int UI_UPDATE_PERIOD = 1000; //millisecond
 
     public static final double STEP_THRESHOLD_INHAND = 0.8d;
-    public static final double STEP_NOISE_THRESHOLD_INHAND = 2.5d;
+    public static final double STEP_NOISE_THRESHOLD_INHAND = 4d;
     public static final double STEP_THRESHOLD_INPOCKET = 4d;
     public static final double STEP_NOISE_THRESHOLD_INPOCKET = 13d;
     public static final double STEP_THRESHOLD_RUNNING = 16d;
