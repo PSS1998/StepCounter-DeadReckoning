@@ -3,10 +3,7 @@ package com.example.stepcounter;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.animation.AnimatorSet;
 import android.annotation.SuppressLint;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -14,8 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -24,7 +19,6 @@ import com.example.stepcounter.services.RoutingService;
 import com.example.stepcounter.services.StepCounterService;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -99,7 +93,7 @@ public class StepCounterActivity extends AppCompatActivity {
             }
         });
         this.graphButtonAnimator = new GraphButtonAnimator();
-        this.graphAnimatorTimer.schedule(this.graphButtonAnimator, 0, this.graphButtonAnimatorInterval);
+        this.graphAnimatorTimer.schedule(this.graphButtonAnimator, this.graphButtonAnimatorInterval / 2, this.graphButtonAnimatorInterval);
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -130,18 +124,13 @@ public class StepCounterActivity extends AppCompatActivity {
     }
 
     public class GraphButtonAnimator extends TimerTask {
-        private int RUN_NUMBER = 5;
-        private int counter = 0;
         @Override
         public void run() {
-            if (counter >= RUN_NUMBER) {
-                graphAnimatorTimer.cancel();
-                return;
-            }
             graphButton.animate().scaleX(0.5f).scaleY(0.5f).rotation(360).setDuration(1000).withEndAction(new Runnable() {
                 @Override
                 public void run() {
                     graphButton.animate().scaleX(1).scaleY(1).rotation(0).setDuration(1000);
+                    graphAnimatorTimer.cancel();
                 }
             });
         }
