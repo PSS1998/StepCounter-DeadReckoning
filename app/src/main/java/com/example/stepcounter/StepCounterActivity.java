@@ -117,7 +117,7 @@ public class StepCounterActivity extends AppCompatActivity {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    updatestepCounterLayout(sharedPreferences.getInt(StepCounterService.stepDbName, 0));
+                    updateStepCounterLayout(sharedPreferences.getInt(StepCounterService.stepDbName, 0));
                 }
             });
         }
@@ -163,9 +163,13 @@ public class StepCounterActivity extends AppCompatActivity {
         }
     }
 
-    private void updatestepCounterLayout(int stepCount) {
+    public void updateStepCounterLayout(int stepCount) {
         try {
-            updateStepCounter(String.valueOf(stepCount), String.valueOf((int)ExtraFunctions.calculateDistance(stepCount, userHeight)), String.valueOf(ExtraFunctions.calculateCalories(stepCount, userWeight, userHeight)));
+            updateStepCounter(
+                    String.valueOf(stepCount),
+                    String.valueOf((int)ExtraFunctions.calculateDistance(stepCount, userHeight)),
+                    String.valueOf(ExtraFunctions.calculateCalories(stepCount, userWeight, userHeight))
+            );
 
         } catch (Exception e) {
             // TODO: 4/22/2021 show error

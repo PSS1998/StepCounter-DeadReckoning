@@ -38,7 +38,6 @@ public class StepDetector extends SensorListener {
                 timestamp = event.timestamp;
             timestamp = event.timestamp;
             NumberOfSteps += 1;
-
         }
     }
 

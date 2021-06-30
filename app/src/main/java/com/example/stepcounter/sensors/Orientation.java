@@ -25,7 +25,6 @@ public class Orientation {
     }
 
     public void updateOrientationAngles() {
-
         SensorManager.getRotationMatrix(rotationMatrix, null,
                 CompassAccelerometer.getInstance(sensorManager).getAcceleration(), Magnetometer.getInstance(sensorManager).getMagnetic_field());
         SensorManager.getOrientation(rotationMatrix, orientationAngles);

@@ -18,7 +18,6 @@ import com.example.stepcounter.Filter;
 import com.example.stepcounter.sensors.Orientation;
 import com.example.stepcounter.Point;
 import com.example.stepcounter.graph.ScatterPlot;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -88,17 +87,15 @@ public class RoutingService extends Service {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    orientation.updateOrientationAngles();
-                    float[] orientationAngles = orientation.getOrientationAngles();
-                    double gyroHeading = orientationAngles[0];
-                    float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
-                    magneticHeading.addValue(compHeading);
-                    float degrees = ExtraFunctions.radsToDegrees(compHeading);
-                    rotation = degrees;
-
                     int stepCounts = sharedPreferences.getInt(stepDbName, 0);
-
                     if(stepCounts - stepCount > 0) {
+                        orientation.updateOrientationAngles();
+                        float[] orientationAngles = orientation.getOrientationAngles();
+                        double gyroHeading = orientationAngles[0];
+                        float compHeading = Filter.calcComplementaryHeading(orientationAngles[0], (float)gyroHeading);
+                        magneticHeading.addValue(compHeading);
+                        float degrees = ExtraFunctions.radsToDegrees(compHeading);
+                        rotation = degrees;
                         stepCount = stepCounts;
                         updateRoute(calculatePoint());
                     }
