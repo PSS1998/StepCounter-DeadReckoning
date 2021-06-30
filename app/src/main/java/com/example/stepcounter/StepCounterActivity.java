@@ -45,6 +45,7 @@ public class StepCounterActivity extends AppCompatActivity {
     private ImageButton graphButton;
     private Button stopButton;
     private GraphButtonAnimator graphButtonAnimator;
+    private final Timer graphAnimatorTimer = new Timer();
     private final int graphButtonAnimatorInterval = 10000;
 
 
@@ -98,7 +99,7 @@ public class StepCounterActivity extends AppCompatActivity {
             }
         });
         this.graphButtonAnimator = new GraphButtonAnimator();
-        new Timer().schedule(this.graphButtonAnimator, 0, this.graphButtonAnimatorInterval);
+        this.graphAnimatorTimer.schedule(this.graphButtonAnimator, 0, this.graphButtonAnimatorInterval);
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -128,9 +129,15 @@ public class StepCounterActivity extends AppCompatActivity {
         }
     }
 
-    public class GraphButtonAnimator extends TimerTask{
+    public class GraphButtonAnimator extends TimerTask {
+        private int RUN_NUMBER = 5;
+        private int counter = 0;
         @Override
         public void run() {
+            if (counter >= RUN_NUMBER) {
+                graphAnimatorTimer.cancel();
+                return;
+            }
             graphButton.animate().scaleX(0.5f).scaleY(0.5f).rotation(360).setDuration(1000).withEndAction(new Runnable() {
                 @Override
                 public void run() {
