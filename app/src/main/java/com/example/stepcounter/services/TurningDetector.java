@@ -11,26 +11,43 @@ import com.example.stepcounter.sensors.RotationVector;
 import com.example.stepcounter.sensors.SensorListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class TurningDetector implements Publisher, Subscriber {
-    private static final double ERROR_THRESHOLD = 0.03 * Math.PI;
-    private static final int CONFIDENT_TURN__MIDDLE = 10;
+    private static final int BUCKET_DEGREE = 5;
 
-    private final ArrayList<Subscriber> subscribers = new ArrayList<>();
+    private final SensorListener sensorListener;
     private final float turningDegree;
     private final float timeThreshold;
-    private final ArrayList<Pair<Long, Float>> directions = new ArrayList<>();
-    private float currentTurn = 0f;
-    private final SensorListener sensorListener;
+    private final ArrayList<Subscriber> subscribers = new ArrayList<>();
+
+    private int bucketNumbers;
+    private final ArrayList<Long> buckets = new ArrayList<>();
+    private Pair<Long, Float> currentDegree;
 
 
     public TurningDetector(SensorManager sensorManager, float turningDegree, float timeThreshold) {
         this.turningDegree = turningDegree;
-        this.timeThreshold = timeThreshold;
-        this.sensorListener = findSensorListener(sensorManager);
+        this.timeThreshold = 1000 * timeThreshold;
+        this.sensorListener = this.findSensorListener(sensorManager);
         if (this.sensorListener != null)
             this.sensorListener.start(SensorManager.SENSOR_DELAY_GAME);
+        this.initialBuckets();
+    }
+
+    private void initialBuckets() {
+        this.bucketNumbers = this.degreeToBucketNumber(2 * Math.PI);
+        for (int i = 0; i < bucketNumbers; i++)
+            this.buckets.add(0L);
+    }
+
+    private void reInitiateBuckets() {
+        this.buckets.clear();
+        this.initialBuckets();
+    }
+
+    private int degreeToBucketNumber(double radianDegree) {
+        double degree = Math.toDegrees(radianDegree);
+        return (int) Math.floor(degree / BUCKET_DEGREE);
     }
 
     private SensorListener findSensorListener(SensorManager sensorManager) {
@@ -45,60 +62,38 @@ public class TurningDetector implements Publisher, Subscriber {
         return null;
     }
 
-    private void addDirection() {
-        long timestamp = this.sensorListener.getTimestamp();
+    private void setCurrentDegree() {
+        long timestamp = this.sensorListener.getTimestamp() / 1000000;
         float orientation = this.sensorListener.getOrientationValues()[0];
-        this.directions.add(new Pair<>(timestamp, orientation));
+        this.currentDegree = new Pair<>(timestamp, orientation);
     }
 
-    private void updateDirectionsData() {
-        long now = new Date().getTime();
-        while (!this.directions.isEmpty() && this.directions.get(0).first < now - this.timeThreshold)
-            this.directions.remove(0);
-    }
-
-    private void calculateCurrentTurnDegree() {
-        float maxTurn = 0;
-        float lastDirection = this.directions.get(this.directions.size() - 1).second;
-        for (Pair<Long, Float> direction : this.directions)
-            if (Math.abs(direction.second - lastDirection) > maxTurn)
-                maxTurn = Math.abs(direction.second - lastDirection);
-        this.currentTurn = maxTurn;
+    private void updateBuckets() {
+        int bucketIndex = this.degreeToBucketNumber(this.currentDegree.second) % this.bucketNumbers;
+        this.buckets.set(bucketIndex, this.currentDegree.first);
     }
 
     private boolean hasTurnedClockwise() {
-        float degreeChangeStep = this.turningDegree / CONFIDENT_TURN__MIDDLE;
-        float lastDirection = this.directions.get(this.directions.size() - 1).second;
-        int counter = 0;
-        for (int i = this.directions.size() - 1; i >= 0; i--) {
-            float meetDegree = lastDirection - degreeChangeStep * counter;
-            if (Math.abs(this.directions.get(i).second - meetDegree) % (float)(2 * Math.PI) < TurningDetector.ERROR_THRESHOLD) {
-                counter++;
-                if (counter == CONFIDENT_TURN__MIDDLE)
-                    return true;
-            }
+        int currentBucketIndex = this.degreeToBucketNumber(this.currentDegree.second);
+        for (int i = 1; i <= this.degreeToBucketNumber(this.turningDegree); i++) {
+            int bucketIndex = (currentBucketIndex - i + this.bucketNumbers) % this.bucketNumbers;
+            if (this.currentDegree.first - this.buckets.get(bucketIndex) > this.timeThreshold)
+                return false;
         }
-        return false;
+        return true;
     }
 
     private boolean hasTurnedCounterClockwise() {
-        float degreeChangeStep = this.turningDegree / CONFIDENT_TURN__MIDDLE;
-        float lastDirection = this.directions.get(this.directions.size() - 1).second;
-        int counter = 0;
-        for (int i = this.directions.size() - 1; i >= 0; i--) {
-            float meetDegree = lastDirection + degreeChangeStep * counter;
-            if (Math.abs(this.directions.get(i).second - meetDegree) % (float)(2 * Math.PI) < TurningDetector.ERROR_THRESHOLD) {
-                counter++;
-                if (counter == CONFIDENT_TURN__MIDDLE)
-                    return true;
-            }
+        int currentBucketIndex = this.degreeToBucketNumber(this.currentDegree.second);
+        for (int i = 1; i <= this.degreeToBucketNumber(this.turningDegree); i++) {
+            int bucketIndex = (currentBucketIndex + i) % this.bucketNumbers;
+            if (this.currentDegree.first - this.buckets.get(bucketIndex) > this.timeThreshold)
+                return false;
         }
-        return false;
+        return true;
     }
 
     private boolean hasTurned() {
-        if (Math.abs(this.currentTurn - this.turningDegree) > TurningDetector.ERROR_THRESHOLD)
-            return false;
         return this.hasTurnedClockwise() || this.hasTurnedCounterClockwise();
     }
 
@@ -114,12 +109,11 @@ public class TurningDetector implements Publisher, Subscriber {
 
     @Override
     public void update() {
-        this.addDirection();
-        this.updateDirectionsData();
-        this.calculateCurrentTurnDegree();
+        this.setCurrentDegree();
         if (this.hasTurned()) {
-            this.directions.clear();
+            this.reInitiateBuckets();
             this.publish();
         }
+        this.updateBuckets();
     }
 }
