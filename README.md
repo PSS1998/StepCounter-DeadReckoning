@@ -15,9 +15,11 @@ Filter: Implementation of Low Pass Filter, Complementary Filter and Median Filte
 This is an example of movement of about 700 meters with this app whithout the use of GPS.<br/>
 ScreenShot:<br/>
 ![ScreenShot](https://github.com/PSS1998/StepCounter-DeadReckoning/blob/master/Reports/ScreenShot.png?raw=true)
-Movement on Map with same scale:<br/>
+<br/>Movement on Map with same scale:<br/>
 ![Map](https://github.com/PSS1998/StepCounter-DeadReckoning/blob/master/Reports/map.png?raw=true)
 <br/>
 ## TODO
 - [ ] Add movement calculation for other than walking.
 - [ ] Add heading detection when phone not in hand.
+- [ ] Merge Master with optimize branches
+- [ ] Refactor GyroOrientation.java
